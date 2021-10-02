@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventManager", "EventManage
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventCore", "EventCore\EventCore.csproj", "{73F291D4-08DE-4327-B24F-4A0A71BF3A09}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{83770F64-4E55-4153-BAC5-0812BC9645C7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{73F291D4-08DE-4327-B24F-4A0A71BF3A09}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{73F291D4-08DE-4327-B24F-4A0A71BF3A09}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{73F291D4-08DE-4327-B24F-4A0A71BF3A09}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83770F64-4E55-4153-BAC5-0812BC9645C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83770F64-4E55-4153-BAC5-0812BC9645C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83770F64-4E55-4153-BAC5-0812BC9645C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83770F64-4E55-4153-BAC5-0812BC9645C7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
