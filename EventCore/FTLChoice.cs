@@ -4,9 +4,10 @@ namespace EventCore
 {
     public class FTLChoice
     {
-        public FTLChoice(bool hidden, string text, FTLEvent @event, string? requirement, IElement element)
+        public FTLChoice(bool hidden, int index, string text, FTLEvent @event, string? requirement, IElement element)
         {
             Hidden = hidden;
+            Index = index;
             Text = text;
             Event = @event;
             Requirement = requirement;
@@ -16,6 +17,7 @@ namespace EventCore
         public IElement Element { get; }
 
         public bool Hidden { get; set; }
+        public int Index { get; }
         public string Text { get; set; }
         public FTLEvent Event { get; set; }
         public string? Requirement { get; set; }

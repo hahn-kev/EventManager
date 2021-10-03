@@ -10,17 +10,13 @@
         <vm:EventsListViewModel />
     </Design.DataContext>
     <DockPanel>
-        <TextBox DockPanel.Dock="Top" Text="{Binding Filter ,Mode=TwoWay}" />
-        <ScrollViewer>
-            <ListBox Width="300" Items="{Binding Events^}">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Margin="5" Text="{Binding Name}" />
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
-        </ScrollViewer>
-
-
+        <TextBox DockPanel.Dock="Top" Watermark="filter" Text="{Binding Filter ,Mode=TwoWay}" />
+        <ListBox Width="300" Items="{Binding Events^}" SelectedItem="{Binding SelectedEvent}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Margin="5" Text="{Binding Name}" />
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
     </DockPanel>
 </UserControl>

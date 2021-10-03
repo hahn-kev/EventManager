@@ -7,19 +7,23 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="EventManager.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
+        Name="window"
         Title="EventManager">
 
     <Design.DataContext>
         <vm:MainWindowViewModel />
     </Design.DataContext>
     <!-- <ScrollViewer> -->
-    <RelativePanel>
-        <Button RelativePanel.AlignTopWithPanel="True" Name="LoadButton" Command="{Binding Load}">Load</Button>
-        <views:EventsList RelativePanel.AlignBottomWithPanel="True"
+    <Grid RowDefinitions="Auto, *" ColumnDefinitions="Auto,*">
+        <Button Grid.Row="0" Grid.Column="0" Name="LoadButton" Command="{Binding Load}">Load</Button>
+        <views:EventsList Grid.Row="1" Grid.Column="0"
+                          Name="EventsList"
                           Margin="0 10"
-                          RelativePanel.Below="LoadButton"
                           DataContext="{Binding EventsList}" />
-    </RelativePanel>
+        <views:EventEditor Grid.Row="1" Grid.Column="1"
+                           Margin="10"
+                           DataContext="{Binding EventsList.EditorViewModel^}" />
+    </Grid>
     <!-- </ScrollViewer> -->
 
 </Window>

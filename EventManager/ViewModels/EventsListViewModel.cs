@@ -4,12 +4,13 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using Avalonia.Layout;
+using DynamicData.Binding;
 using EventCore;
 using ReactiveUI;
 
 namespace EventManager.ViewModels
 {
-    public class EventsListViewModel: ViewModelBase
+    public class EventsListViewModel : ViewModelBase
     {
         public EventsListViewModel()
         {
@@ -25,13 +26,19 @@ namespace EventManager.ViewModels
         }
 
 
-        private FTLEvent _selectedEvent;
+        private FTLEvent? _selectedEvent;
 
-        public FTLEvent SelectedEvent
+        public FTLEvent? SelectedEvent
         {
             get => _selectedEvent;
             set => this.RaiseAndSetIfChanged(ref _selectedEvent, value);
         }
+
+        public IObservable<EventEditorViewModel> EditorViewModel =>
+            this.WhenValueChanged(model => model.SelectedEvent)
+                .Where(@event => @event != null)
+                .Select(@event => new EventEditorViewModel(@event!));
+        public bool HasSelectedEvent => SelectedEvent != null;
 
         public IObservable<IEnumerable<FTLEvent>> Events =>
             Root.CombineLatest(FilterObservable)

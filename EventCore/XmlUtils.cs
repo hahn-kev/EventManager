@@ -6,7 +6,7 @@ using AngleSharp.Dom;
 
 namespace EventCore
 {
-    internal static class XmlUtils
+    public static class XmlUtils
     {
         public static IEnumerable<XNode> ParseFragment(XmlReader xr)
         {

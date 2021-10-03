@@ -14,13 +14,14 @@ namespace EventCore
     public class ModFileLoader
     {
         private string _filePath;
-        public Dictionary<string, FTLEvent> Events { get; } = new Dictionary<string, FTLEvent>();
-        public List<FTLEventRef> EventRefs { get; } = new List<FTLEventRef>();
-        public ModFile? ModFile { get; set; }
+        public Dictionary<string, FTLEvent> Events => ModFile.Events;
+        public List<FTLEventRef> EventRefs { get; } = new();
+        public ModFile ModFile { get; set; }
 
         public ModFileLoader(string filePath)
         {
             _filePath = filePath;
+            ModFile = new ModFile(_filePath);
         }
 
         public async Task Load()
@@ -41,8 +42,12 @@ namespace EventCore
             //         ConformanceLevel = ConformanceLevel.Fragment,
             //     });
 
-            var ftlEvents = ParseEvents(document.Children).ToArray();
-            ModFile = new ModFile(_filePath, ftlEvents);
+            var ftlEvents = ParseEvents(document.Children);
+            foreach (var ftlEvent in ftlEvents)
+            {
+                if (ftlEvent.Name == null) continue;
+                ModFile.Events[ftlEvent.Name] = ftlEvent;
+            }
         }
 
         private IEnumerable<FTLEvent> ParseEvents(IEnumerable<IElement> elements)
@@ -69,14 +74,13 @@ namespace EventCore
         {
             FTLEvent Inner()
             {
-                if (IsEventRef(element, out var name)) return FTLEvent.EventRef(element, name);
+                if (IsEventRef(element, out var name)) return FTLEvent.EventRef(element, ModFile, name);
                 // if (element) return FTLEvent.Nothing;
 
                 var xAttribute = element.GetAttribute("name");
-                var textElement = element.Element("text");
                 var ftlChoices = element.Children.Where(e => e.TagName == "choice").Select(ChoiceElementToModel)
                     .ToList();
-                return new FTLEvent(element, xAttribute, textElement?.TextContent, ftlChoices);
+                return new FTLEvent(element, xAttribute, ftlChoices, ModFile);
             }
 
             var ftlEvent = Inner();
@@ -106,7 +110,7 @@ namespace EventCore
             return false;
         }
 
-        private FTLChoice ChoiceElementToModel(IElement element)
+        private FTLChoice ChoiceElementToModel(IElement element, int index)
         {
             var textElement = element.Element("text") ?? throw new NotSupportedException("choice must have text");
             var eventElement = element.Element("event");
@@ -118,6 +122,7 @@ namespace EventCore
 
             var ftlEvent = EventElementToModel(eventElement);
             return new FTLChoice(element.GetAttribute("hidden") == "true",
+                index,
                 textElement.TextContent,
                 ftlEvent,
                 element.GetAttribute("req"),
