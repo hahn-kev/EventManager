@@ -4,6 +4,7 @@
     <option name="projectPerEditor">
       <map>
         <entry key="EventManager/App.axaml" value="EventManager/EventManager.csproj" />
+        <entry key="EventManager/Views/EventsList.axaml" value="EventManager/EventManager.csproj" />
         <entry key="EventManager/Views/MainWindow.axaml" value="EventManager/EventManager.csproj" />
       </map>
     </option>
