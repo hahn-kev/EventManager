@@ -34,11 +34,8 @@ namespace EventManager.ViewModels
             set => this.RaiseAndSetIfChanged(ref _selectedEvent, value);
         }
 
-        public IObservable<EventEditorViewModel> EditorViewModel =>
-            this.WhenValueChanged(model => model.SelectedEvent)
-                .Where(@event => @event != null)
-                .Select(@event => new EventEditorViewModel(@event!));
-        public bool HasSelectedEvent => SelectedEvent != null;
+        public IObservable<FTLEvent> ObserveSelectedEvent =>
+            this.WhenValueChanged(model => model.SelectedEvent).Where(@event => @event != null)!.OfType<FTLEvent>();
 
         public IObservable<IEnumerable<FTLEvent>> Events =>
             Root.CombineLatest(FilterObservable)

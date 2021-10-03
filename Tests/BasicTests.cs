@@ -24,7 +24,7 @@ namespace Tests
         public async Task CanLoadFile()
         {
             var modFile = new ModFileLoader(TestFile);
-            await modFile.Load();
+            modFile.Load();
             modFile.Events.ShouldNotBeEmpty();
         }
 
@@ -34,7 +34,7 @@ namespace Tests
             var eventName = "LANIUS_LANGUAGE";
 
             var modFile = new ModFileLoader(TestFile);
-            await modFile.Load();
+            modFile.Load();
 
             modFile.Events.ShouldContainKey(eventName);
             var ftlEvent = modFile.Events[eventName];

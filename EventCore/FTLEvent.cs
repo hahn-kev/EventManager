@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Xml.Linq;
 using AngleSharp.Dom;
+using AngleSharp.Html.Dom;
 
 namespace EventCore
 {
@@ -49,10 +50,24 @@ namespace EventCore
             }
         }
 
-        public string Text
+        public string? Text
         {
-            get => Element.Element("text").TextContent;
-            set => Element.Element("text").TextContent = value;
+            get => Element.Element("text")?.TextContent;
+            set
+            {
+                var element = Element.Element("text");
+                if (element != null)
+                {
+                    element.TextContent = value ?? "";
+                }
+                else
+                {
+
+                    var htmlElement = Element.Owner!.CreateElement("text");
+                    htmlElement.TextContent = value ?? "";
+                    Element.AppendChild(htmlElement);
+                }
+            }
         }
 
         public bool HasReward => Element.Element("autoReward") != null;

@@ -24,15 +24,15 @@ namespace EventCore
             ModFile = new ModFile(_filePath);
         }
 
-        public async Task Load()
+        public void Load()
         {
             var xmlParser = new XmlParser(new XmlParserOptions
             {
                 IsSuppressingErrors = true
             });
-            await using var fileStream = File.OpenRead(_filePath);
+             var fileText =  File.ReadAllText(_filePath);
 
-            var document = await xmlParser.ParseDocumentAsync(fileStream);
+            var document = xmlParser.ParseDocument(fileText);
 
             // using var xmlReader = XmlReader.Create(File.OpenRead(_filePath),
             //     new XmlReaderSettings

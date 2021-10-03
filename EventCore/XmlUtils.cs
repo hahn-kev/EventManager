@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
@@ -20,7 +21,7 @@ namespace EventCore
 
         public static IElement? Element(this IElement element, string tagName)
         {
-            return element.Children.FirstOrDefault(e => e.TagName == tagName);
+            return element.Children.FirstOrDefault(e => e.TagName.Equals(tagName, StringComparison.OrdinalIgnoreCase));
         }
     }
 }

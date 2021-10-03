@@ -28,7 +28,7 @@
                  Text="{Binding RawText^}" />
         <StackPanel Grid.Column="2" Grid.Row="0" Grid.RowSpan="5">
             <TextBlock>Choices:</TextBlock>
-            <ListBox Width="200" Items="{Binding Choices}">
+            <ListBox Width="200" Items="{Binding Choices}" SelectedItem="{Binding SelectedChoice}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Margin="0 5" Orientation="Horizontal">

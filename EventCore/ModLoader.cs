@@ -27,7 +27,8 @@ namespace EventCore
             var modFileLoaders = Directory.EnumerateFiles(_folderPath, "*.xml*")
                 .Select(filePath => new ModFileLoader(filePath)).ToArray();
 
-            await Task.WhenAll(modFileLoaders.Select(mfl => mfl.Load()));
+            Parallel.ForEach(modFileLoaders,loader => loader.Load());
+            // await Task.WhenAll(modFileLoaders.Select(mfl => mfl.Load()));
 
             EventRefs.AddRange(modFileLoaders.SelectMany(loader => loader.EventRefs));
             Events = modFileLoaders.SelectMany(d => d.Events)

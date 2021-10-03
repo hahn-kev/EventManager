@@ -1,0 +1,24 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:EventManager.ViewModels"
+             xmlns:views="clr-namespace:EventManager.Views"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="EventManager.Views.EventEditorTree">
+    <Design.DataContext>
+        <vm:EventEditorTreeViewModel />
+    </Design.DataContext>
+
+    <ScrollViewer Name="ScrollViewer" VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Visible">
+        <ItemsRepeater Layout="{Binding RepeaterLayout}"
+                       Items="{Binding EditorViewModels}">
+            <ItemsRepeater.ItemTemplate>
+                <DataTemplate>
+                    <views:EventEditor Width="500" />
+                </DataTemplate>
+            </ItemsRepeater.ItemTemplate>
+        </ItemsRepeater>
+    </ScrollViewer>
+
+</UserControl>

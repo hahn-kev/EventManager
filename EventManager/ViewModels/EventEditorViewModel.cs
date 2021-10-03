@@ -11,12 +11,15 @@ namespace EventManager.ViewModels
 {
     public class EventEditorViewModel : ViewModelBase
     {
+        public EventEditorViewModel()
+        {
+        }
         public EventEditorViewModel(FTLEvent @event)
         {
             Event = @event;
-            Name = Event.Name;
-            Text = Event.Text;
         }
+
+
 
         private FTLEvent Event { get; }
 
@@ -45,6 +48,13 @@ namespace EventManager.ViewModels
         }
 
         public List<FTLChoice> Choices => Event.Choices;
+
+        private FTLChoice? _selectedChoice;
+        public FTLChoice? SelectedChoice
+        {
+            get => _selectedChoice;
+            set => this.RaiseAndSetIfChanged(ref _selectedChoice, value);
+        }
 
         public IObservable<string?> RawText =>
             Observable.Return(this).Concat(this.WhenAnyPropertyChanged())
