@@ -12,7 +12,7 @@ namespace EventCore
         public async Task Save(ModRoot modRoot)
         {
             var modFiles = modRoot.ModFiles.Values;
-            await Task.WhenAll(modFiles.Select(SaveFile));
+            await Task.WhenAll(modFiles.Where(file => file.Dirty).Select(SaveFile));
         }
 
         public async Task SaveFile(ModFile file)

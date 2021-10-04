@@ -23,7 +23,7 @@ namespace EventCore
         public FTLEvent(IElement xElement, string? name, List<FTLChoice> choices, ModFile modFile) : this(xElement,
             modFile)
         {
-            Name = name;
+            _name = name;
             Choices = choices;
             ModFile = modFile;
         }
