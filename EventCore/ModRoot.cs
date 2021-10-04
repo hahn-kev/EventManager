@@ -11,11 +11,20 @@ namespace EventCore
         {
             FolderPath = folderPath;
             ModFiles = modFiles.ToDictionary(f => Path.GetFileName(f.FilePath));
+            foreach (var modFile in modFiles)
+            {
+                modFile.ModRoot = this;
+            }
         }
 
         public string FolderPath { get; set; }
 
         public Dictionary<string, ModFile> ModFiles { get; }
         public IEnumerable<FTLEvent> TopLevelEvents => ModFiles.Values.SelectMany(mf => mf.Events.Values);
+
+        public Dictionary<string, FTLEvent> EventsLookup =>
+            ModFiles.Values.SelectMany(mf => mf.Events)
+                .ToLookup(pair => pair.Key, pair => pair.Value)
+                .ToDictionary(g => g.Key, g => g.Last());
     }
 }

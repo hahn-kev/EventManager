@@ -10,11 +10,6 @@ namespace EventCore
     {
         public static readonly FTLEvent Nothing = new FTLEvent();
 
-        public static FTLEvent EventRef(IElement xElement, ModFile modFile, string name)
-        {
-            return new FTLEventRef(xElement, name, modFile);
-        }
-
         private FTLEvent()
         {
         }
@@ -37,7 +32,7 @@ namespace EventCore
         public ModFile ModFile { get; set; }
         private string? _name;
 
-        public string? Name
+        public virtual string? Name
         {
             get => _name;
             set
@@ -62,7 +57,6 @@ namespace EventCore
                 }
                 else
                 {
-
                     var htmlElement = Element.Owner!.CreateElement("text");
                     htmlElement.TextContent = value ?? "";
                     Element.AppendChild(htmlElement);
@@ -85,16 +79,35 @@ namespace EventCore
     public class FTLEventRef : FTLEvent
     {
         private FTLEvent? ActualEvent;
-        private readonly string _refName;
+        private string _refName;
 
         public FTLEventRef(IElement xElement, string refName, ModFile modFile) : base(xElement, modFile)
         {
             Element = xElement;
             _refName = refName;
-            Name = refName;
         }
 
         public override List<FTLChoice> Choices => ActualEvent!.Choices;
+
+        public override string? Name
+        {
+            get => _refName;
+            set
+            {
+                _refName = value!;
+                if (Element.HasAttribute("load"))
+                {
+                    Element.SetAttribute("load", _refName);
+                }
+                else
+                {
+                    var loadEventElement = Element.Element("loadEvent");
+                    loadEventElement.TextContent = _refName;
+                }
+
+                FindRef(ModFile.ModRoot?.EventsLookup ?? ModFile.Events);
+            }
+        }
 
         public override bool IsUnknownRef => ActualEvent == null;
 

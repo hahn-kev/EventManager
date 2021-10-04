@@ -12,8 +12,8 @@ namespace EventCore
     public class ModLoader
     {
         private readonly string _folderPath;
-        private Dictionary<string, FTLEvent> Events = new Dictionary<string, FTLEvent>();
-        private List<FTLEventRef> EventRefs = new List<FTLEventRef>();
+        private Dictionary<string, FTLEvent> Events = new();
+        private List<FTLEventRef> EventRefs = new();
 
         public ModLoader(string folderPath)
         {

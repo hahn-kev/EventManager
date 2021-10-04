@@ -30,7 +30,7 @@ namespace EventCore
             {
                 IsSuppressingErrors = true
             });
-             var fileText =  File.ReadAllText(_filePath);
+            var fileText =  File.ReadAllText(_filePath);
 
             var document = xmlParser.ParseDocument(fileText);
 
@@ -74,7 +74,7 @@ namespace EventCore
         {
             FTLEvent Inner()
             {
-                if (IsEventRef(element, out var name)) return FTLEvent.EventRef(element, ModFile, name);
+                if (IsEventRef(element, out var name)) return new FTLEventRef(element, name, ModFile);
                 // if (element) return FTLEvent.Nothing;
 
                 var xAttribute = element.GetAttribute("name");
