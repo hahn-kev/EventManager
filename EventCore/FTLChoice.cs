@@ -7,7 +7,7 @@ namespace EventCore
         public FTLChoice(bool hidden, int index, string text, FTLEvent @event, string? requirement, IElement element)
         {
             Hidden = hidden;
-            Index = index;
+            Index = index + 1;
             Text = text;
             Event = @event;
             Requirement = requirement;

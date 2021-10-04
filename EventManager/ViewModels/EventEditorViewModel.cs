@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using Avalonia.Input;
 using DynamicData.Binding;
 using EventCore;
@@ -14,12 +15,19 @@ namespace EventManager.ViewModels
         public EventEditorViewModel()
         {
         }
+
         public EventEditorViewModel(FTLEvent @event)
         {
             Event = @event;
         }
 
+        public Subject<Unit> Closed { get; } = new();
 
+        public void Close()
+        {
+            Closed.OnNext(Unit.Default);
+            Closed.OnCompleted();
+        }
 
         private FTLEvent Event { get; }
 
@@ -48,8 +56,10 @@ namespace EventManager.ViewModels
         }
 
         public List<FTLChoice> Choices => Event.Choices;
+        public bool HasChoices => Choices.Count > 0;
 
         private FTLChoice? _selectedChoice;
+
         public FTLChoice? SelectedChoice
         {
             get => _selectedChoice;
@@ -60,9 +70,9 @@ namespace EventManager.ViewModels
             Observable.Return(this).Concat(this.WhenAnyPropertyChanged())
                 .Select(model => model?.Event.Element.OuterHtml);
 
-         public void SetRawText(string rawText)
-         {
-             Event.Element.OuterHtml = rawText;
-         }
+        public void SetRawText(string rawText)
+        {
+            Event.Element.OuterHtml = rawText;
+        }
     }
 }

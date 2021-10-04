@@ -17,13 +17,10 @@
         <Button Grid.Row="0" Grid.Column="0" Name="LoadButton" Command="{Binding Load}">Load</Button>
         <views:EventsList Grid.Row="1" Grid.Column="0"
                           Name="EventsList"
-                          Margin="0 10"
+                          Margin="0 10 0 0"
                           DataContext="{Binding EventsList}" />
         <Panel Grid.Row="1" Grid.Column="1" IsVisible="{Binding HasSelectedEvent^}">
-            <views:EventEditorTree Margin="10" DataContext="{Binding EditorTreeViewModel}" />
-            <!-- <views:EventEditor -->
-            <!--     Margin="10" -->
-            <!--     DataContext="{Binding EventsList.EditorViewModel^}" /> -->
+            <views:EventEditorTree DataContext="{Binding EditorTreeViewModel}" />
         </Panel>
     </Grid>
 

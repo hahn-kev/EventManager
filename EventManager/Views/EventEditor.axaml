@@ -1,6 +1,7 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:EventManager.ViewModels"
+             xmlns:c="using:EventManager.Controls"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
@@ -8,37 +9,54 @@
     <Design.DataContext>
         <vm:EventEditorViewModel />
     </Design.DataContext>
-    <Grid ColumnDefinitions="Auto, *, 200" RowDefinitions="Auto, Auto, Auto, Auto, *">
-        <StackPanel Margin="0 5" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Orientation="Horizontal">
-            <TextBlock Padding="0 0 4 0">File:</TextBlock> <TextBlock Text="{Binding FileName}" />
-        </StackPanel>
 
-        <TextBlock Grid.Column="0" Grid.Row="1" VerticalAlignment="Center">Name:</TextBlock>
-        <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding Name}" />
+    <UserControl.Styles>
+        <Style Selector="c|AutoGrid TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+    </UserControl.Styles>
 
-        <TextBlock Grid.Column="0" Grid.Row="2" VerticalAlignment="Center">Text:</TextBlock>
-        <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding Text}" TextWrapping="Wrap" />
+    <Grid ColumnDefinitions="*, 200" RowDefinitions="Auto, Auto, *">
+        <Button Grid.Row="0" Grid.Column="0" VerticalAlignment="Top" Command="{Binding Close}">X</Button>
+        <c:AutoGrid Grid.Row="0" Grid.Column="0" RowCount="4" RowHeight="Auto" ChildMargin="2"
+                    ColumnDefinitions="Auto, *">
 
-        <TextBlock Grid.Column="0" Grid.Row="3" VerticalAlignment="Center">Raw XML:</TextBlock>
-        <TextBox Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="2" VerticalAlignment="Top"
+            <TextBlock Padding="40 0 4 0">File:</TextBlock>
+            <TextBlock Text="{Binding FileName}" />
+
+            <TextBlock>Name:</TextBlock>
+            <TextBox Text="{Binding Name}" />
+
+            <TextBlock>Text:</TextBlock>
+            <TextBox Text="{Binding Text}" TextWrapping="Wrap" />
+
+            <CheckBox IsChecked="{Binding Event.HasCrew}">Crew</CheckBox>
+        </c:AutoGrid>
+
+
+        <TextBlock Grid.Column="0" Grid.Row="1" VerticalAlignment="Center">Raw XML:</TextBlock>
+        <TextBox Grid.Column="0" Grid.Row="2" VerticalAlignment="Top"
                  AcceptsReturn="True"
                  AcceptsTab="True"
                  FontFamily="Consolas"
                  TextWrapping="Wrap"
                  Text="{Binding RawText^}" />
-        <StackPanel Grid.Column="2" Grid.Row="0" Grid.RowSpan="5">
-            <TextBlock>Choices:</TextBlock>
-            <ListBox Width="200" Items="{Binding Choices}" SelectedItem="{Binding SelectedChoice}">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Margin="0 5" Orientation="Horizontal">
-                            <TextBlock Padding="0 0 4 0" Text="{Binding Index}" />
-                            <TextBlock Text="{Binding Text}" />
-                        </StackPanel>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
-        </StackPanel>
+
+        <Border Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" BorderThickness="5" IsVisible="{Binding HasChoices}">
+            <StackPanel>
+                <TextBlock>Choices:</TextBlock>
+                <ListBox Items="{Binding Choices}" SelectedItem="{Binding SelectedChoice}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Margin="0 5" Orientation="Horizontal">
+                                <TextBlock Padding="0 0 4 0" Text="{Binding Index}" />
+                                <TextBlock Text="{Binding Text}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </StackPanel>
+        </Border>
 
     </Grid>
 </UserControl>

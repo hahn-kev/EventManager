@@ -15,7 +15,7 @@
                        Items="{Binding EditorViewModels}">
             <ItemsRepeater.ItemTemplate>
                 <DataTemplate>
-                    <views:EventEditor Width="500" />
+                    <views:EventEditor Margin="10" Width="500" />
                 </DataTemplate>
             </ItemsRepeater.ItemTemplate>
         </ItemsRepeater>

@@ -24,10 +24,16 @@ namespace EventManager.ViewModels
         {
             var choiceDepth = EditorViewModels.Count;
             var editorViewModel = new EventEditorViewModel(ftlEvent);
+
             editorViewModel.ObservableForProperty(model => model.SelectedChoice)
                 .Where(change => change.Value != null)
                 .TakeUntil(EventsCleared.Where(clearedDepth => clearedDepth < choiceDepth))
                 .Subscribe(change => ChoiceChanged(change.Value!.Event, choiceDepth + 1));
+            editorViewModel.Closed.Subscribe(_ =>
+            {
+                RemoveEditorsTo(choiceDepth);
+            });
+
             EditorViewModels.Add(editorViewModel);
         }
 
