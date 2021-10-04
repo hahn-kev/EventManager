@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 using EventCore;
 using Shouldly;
@@ -20,12 +22,27 @@ namespace Tests
             modRoot.ShouldNotBeNull();
         }
 
+
         [Fact]
         public async Task CanLoadFile()
         {
-            var modFile = new ModFileLoader(TestFile);
-            modFile.Load();
-            modFile.Events.ShouldNotBeEmpty();
+            var fileLoader = new ModFileLoader(TestFile);
+            fileLoader.Load();
+            fileLoader.Events.ShouldNotBeEmpty();
+        }
+
+        [Fact]
+        public async Task CanSaveFile()
+        {
+            var fileLoader = new ModFileLoader(TestFile);
+            fileLoader.Load();
+            var modFile = fileLoader.ModFile;
+            var fileSaver = new ModSaver();
+            var ms = new MemoryStream();
+
+            await fileSaver.SaveFile(modFile, ms);
+            var xml = Encoding.Default.GetString(ms.ToArray());
+            xml.ShouldMatchApproved(builder => builder.DoNotIgnoreLineEndings());
         }
 
         [Fact]

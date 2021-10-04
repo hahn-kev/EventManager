@@ -7,19 +7,21 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="EventManager.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
-        Name="window"
         Title="EventManager">
 
     <Design.DataContext>
         <vm:MainWindowViewModel />
     </Design.DataContext>
     <Grid RowDefinitions="Auto, *" ColumnDefinitions="Auto,*">
-        <Button Grid.Row="0" Grid.Column="0" Name="LoadButton" Command="{Binding Load}">Load</Button>
+        <StackPanel Orientation="Horizontal">
+
+        <Button Grid.Row="0" Grid.Column="0" Command="{Binding Load}">Load</Button>
+        <Button Grid.Row="0" Grid.Column="0" Command="{Binding Save}">Save</Button>
+        </StackPanel>
         <views:EventsList Grid.Row="1" Grid.Column="0"
-                          Name="EventsList"
                           Margin="0 10 0 0"
                           DataContext="{Binding EventsList}" />
-        <Panel Grid.Row="1" Grid.Column="1" IsVisible="{Binding HasSelectedEvent^}">
+        <Panel Grid.Row="1" Grid.Column="1" IsVisible="{Binding EventsList.HasSelectedEvent^}">
             <views:EventEditorTree DataContext="{Binding EditorTreeViewModel}" />
         </Panel>
     </Grid>

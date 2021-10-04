@@ -41,7 +41,7 @@ namespace EventCore
             //         IgnoreComments = true,
             //         ConformanceLevel = ConformanceLevel.Fragment,
             //     });
-
+            ModFile.Document = document;
             var ftlEvents = ParseEvents(document.Children);
             foreach (var ftlEvent in ftlEvents)
             {

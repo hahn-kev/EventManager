@@ -11,6 +11,9 @@ namespace EventCore
         public string FilePath { get; set; }
         public string FileName => Path.GetFileName(FilePath);
         public Dictionary<string, FTLEvent> Events { get; }
+
+        public IXmlDocument? Document { get; set; }
+
         public ModFile(string filePath)
         {
             FilePath = filePath;

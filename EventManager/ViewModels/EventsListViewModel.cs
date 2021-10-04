@@ -14,15 +14,30 @@ namespace EventManager.ViewModels
     {
         public EventsListViewModel()
         {
+            ObserveSelectedEvent = this.WhenValueChanged(model => model.SelectedEvent)
+                .Where(@event => @event != null)!.OfType<FTLEvent>();
+            var filterRx = this.WhenPropertyChanged(vm => vm.Filter).Select(value => value.Value);
+            Events = Root.CombineLatest(filterRx)
+                .Select(t =>
+                {
+                    var (modRoot, filter) = t;
+                    if (modRoot == null) return Array.Empty<FTLEvent>();
+                    return modRoot.TopLevelEvents.Where(e =>
+                        string.IsNullOrWhiteSpace(filter) ||
+                        (e.Name?.StartsWith(filter, true, null) ?? false));
+                });
+            //first returns false until an event get's selected
+            HasSelectedEvent = Observable.Return(false)
+                .Concat(ObserveSelectedEvent.FirstAsync().Select(_ => true));
         }
 
         public BehaviorSubject<ModRoot?> Root { get; } = new(null);
-        public BehaviorSubject<string> FilterObservable { get; } = new("");
+        private string _filter;
 
         public string Filter
         {
-            get => FilterObservable.Value;
-            set => FilterObservable.OnNext(value);
+            get => _filter;
+            set => this.RaiseAndSetIfChanged(ref _filter, value);
         }
 
 
@@ -34,18 +49,9 @@ namespace EventManager.ViewModels
             set => this.RaiseAndSetIfChanged(ref _selectedEvent, value);
         }
 
-        public IObservable<FTLEvent> ObserveSelectedEvent =>
-            this.WhenValueChanged(model => model.SelectedEvent).Where(@event => @event != null)!.OfType<FTLEvent>();
+        public IObservable<bool> HasSelectedEvent { get; }
+        public IObservable<FTLEvent> ObserveSelectedEvent { get; }
 
-        public IObservable<IEnumerable<FTLEvent>> Events =>
-            Root.CombineLatest(FilterObservable)
-                .Select(t =>
-                {
-                    var (modRoot, filter) = t;
-                    if (modRoot == null) return Array.Empty<FTLEvent>();
-                    return modRoot.TopLevelEvents.Where(e =>
-                        string.IsNullOrWhiteSpace(filter) ||
-                        (e.Name?.StartsWith(filter, true, null) ?? false));
-                });
+        public IObservable<IEnumerable<FTLEvent>> Events { get; }
     }
 }
