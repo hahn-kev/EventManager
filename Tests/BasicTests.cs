@@ -43,7 +43,7 @@ namespace Tests
 
             await fileSaver.SaveFile(modFile, ms);
             var xml = Encoding.Default.GetString(ms.ToArray());
-            xml.ShouldMatchApproved(builder => builder.DoNotIgnoreLineEndings());
+            xml.ShouldMatchApproved(builder => builder.DoNotIgnoreLineEndings().SubFolder("TestApprovals"));
         }
 
         [Fact]
