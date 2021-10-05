@@ -34,10 +34,7 @@ namespace EventCore
                 Dirty = true;
                 observer.Disconnect();
             });
-            foreach (var node in _document.Children)
-            {
-                observer.Connect(node, true, true, true, true);
-            }
+            observer.Connect(_document.DocumentElement, true, true, true, true);
         }
 
         public ModFile(string filePath)

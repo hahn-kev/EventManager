@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using EventCore;
@@ -43,6 +44,19 @@ namespace Tests
             await fileSaver.SaveFile(modFile, ms);
             var xml = Encoding.Default.GetString(ms.ToArray());
             xml.ShouldMatchApproved(builder => builder.DoNotIgnoreLineEndings());
+        }
+
+        [Fact]
+        public void ChangingFtlEventMarksFileDirty()
+        {
+
+            var fileLoader = new ModFileLoader(TestFile);
+            fileLoader.Load();
+            var modFile = fileLoader.ModFile;
+            var ftlEvent = modFile.Events.Values.First();
+            ftlEvent.Name += "_1";
+
+            modFile.Dirty.ShouldBeTrue();
         }
 
         [Fact]
