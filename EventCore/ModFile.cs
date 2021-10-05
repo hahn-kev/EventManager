@@ -14,9 +14,9 @@ namespace EventCore
         public bool Dirty { get; private set; }
         public Dictionary<string, FTLEvent> Events { get; }
 
-        private IXmlDocument? _document;
+        private IDocument? _document;
 
-        public IXmlDocument? Document
+        public IDocument? Document
         {
             get => _document;
             set

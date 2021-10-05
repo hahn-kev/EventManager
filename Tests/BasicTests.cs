@@ -49,7 +49,6 @@ namespace Tests
         [Fact]
         public void ChangingFtlEventMarksFileDirty()
         {
-
             var fileLoader = new ModFileLoader(TestFile);
             fileLoader.Load();
             var modFile = fileLoader.ModFile;
@@ -57,6 +56,17 @@ namespace Tests
             ftlEvent.Name += "_1";
 
             modFile.Dirty.ShouldBeTrue();
+        }
+
+        [Fact]
+        public void NotChangingFtlEventKeepsTheModClean()
+        {
+            var fileLoader = new ModFileLoader(TestFile);
+            fileLoader.Load();
+            var modFile = fileLoader.ModFile;
+            var ftlEvent = modFile.Events.Values.First();
+
+            modFile.Dirty.ShouldBeFalse();
         }
 
         [Fact]
