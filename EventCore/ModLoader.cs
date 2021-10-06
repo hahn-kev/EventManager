@@ -33,6 +33,7 @@ namespace EventCore
                 modFileLoader.Load();
             }
             // await Task.WhenAll(modFileLoaders.Select(mfl => mfl.Load()));
+            modFileLoaders = modFileLoaders.Where(file => file.Events.Count > 0).ToArray();
 
             EventRefs.AddRange(modFileLoaders.SelectMany(loader => loader.EventRefs));
             Events = modFileLoaders.SelectMany(d => d.Events)
@@ -40,7 +41,8 @@ namespace EventCore
                 .ToDictionary(g => g.Key, g => g.Last());
 
             LinkMissingEvents();
-            return new ModRoot(_folderPath, modFileLoaders.Select(loader => loader.ModFile!).ToArray());
+            return new ModRoot(_folderPath, modFileLoaders.Select(loader => loader.ModFile)
+                .ToArray());
         }
 
         private void LinkMissingEvents()

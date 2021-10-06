@@ -74,6 +74,7 @@ namespace EventCore
 
         public virtual List<FTLChoice> Choices { get; } = new();
         public virtual bool IsUnknownRef => false;
+        public virtual bool IsRef => false;
     }
 
     public class FTLEventRef : FTLEvent
@@ -110,6 +111,8 @@ namespace EventCore
         }
 
         public override bool IsUnknownRef => ActualEvent == null;
+
+        public override bool IsRef => true;
 
         public void FindRef(Dictionary<string, FTLEvent> events)
         {

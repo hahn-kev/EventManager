@@ -1,11 +1,16 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AngleSharp.Dom;
+using AngleSharp.Xml.Parser;
 using EventCore;
+using JetBrains.dotMemoryUnit;
 using Shouldly;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Tests
 {
@@ -16,11 +21,81 @@ namespace Tests
         private const string TestFile =
             @"D:\Games\FTL Stuff\EventManager\Tests\TestData\data\dlcEvents_anaerobic.xml.append";
 
+        private readonly ITestOutputHelper output;
+
+        public BasicTests(ITestOutputHelper output)
+        {
+            this.output = output;
+            DotMemoryUnitTestOutput.SetOutputMethod(output.WriteLine);
+        }
+
         [Fact]
         public async Task CanLoadMod()
         {
             var modRoot = await new ModLoader(TestData).Load();
             modRoot.ShouldNotBeNull();
+        }
+
+        [Fact]
+        public async Task MemoryUsage()
+        {
+            var xmlElementType = typeof(XmlParser).Assembly.GetType("AngleSharp.Xml.Dom.XmlElement");
+            xmlElementType.ShouldNotBeNull();
+
+            var modRoot = await new ModLoader(TestData).Load();
+
+            dotMemory.Check(memory =>
+            {
+                memory.GetObjects(property => property.Type.Is(xmlElementType))
+                    .ObjectsCount.ShouldBeLessThan(110_000);
+
+                var memorySizeInMb = memory.SizeInBytes / 1_000_000f;
+                memorySizeInMb.ShouldBe(111, 1);
+            });
+        }
+
+        [Fact]
+        public async Task Testing()
+        {
+            var modRoot = await new ModLoader(TestData).Load();
+
+            var names = modRoot.TopLevelEvents
+                .SelectMany(ftlEvent => Events(ftlEvent))
+                .SelectMany(element => element.Children, (element, attr) => attr.TagName).Distinct();
+            // .SelectMany(element => element.Attributes, (element, attr) => attr.Name).Distinct();
+            output.WriteLine("[\"{0}\"]", string.Join("\", \"", names));
+        }
+
+        private IEnumerable<IElement> Choices(FTLEvent @event)
+        {
+            if (@event.Choices.Count == 0) yield break;
+            var stack = new Stack<FTLChoice>(@event.Choices);
+            while (stack.Count > 0)
+            {
+                var ftlChoice = stack.Pop();
+                yield return ftlChoice.Element;
+                if (ftlChoice.Event.IsRef) continue;
+                foreach (var eventChoice in ftlChoice.Event.Choices)
+                {
+                    stack.Push(eventChoice);
+                }
+            }
+        }
+        private IEnumerable<IElement> Events(FTLEvent @event)
+        {
+            yield return @event.Element;
+            if (@event.Choices.Count == 0) yield break;
+            var stack = new Stack<FTLChoice>(@event.Choices);
+            while (stack.Count > 0)
+            {
+                var ftlChoice = stack.Pop();
+                yield return ftlChoice.Event.Element;
+                if (ftlChoice.Event.IsRef) continue;
+                foreach (var eventChoice in ftlChoice.Event.Choices)
+                {
+                    stack.Push(eventChoice);
+                }
+            }
         }
 
 
