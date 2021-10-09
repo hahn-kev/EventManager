@@ -34,13 +34,6 @@ namespace EventCore
 
             var document = xmlParser.ParseDocument(fileText);
 
-            // using var xmlReader = XmlReader.Create(File.OpenRead(_filePath),
-            //     new XmlReaderSettings
-            //     {
-            //         CloseInput = true,
-            //         IgnoreComments = true,
-            //         ConformanceLevel = ConformanceLevel.Fragment,
-            //     });
             ModFile.Document = document;
             var ftlEvents = ParseEvents(document.Children);
             foreach (var ftlEvent in ftlEvents)
@@ -112,7 +105,6 @@ namespace EventCore
 
         private FTLChoice ChoiceElementToModel(IElement element, int index)
         {
-            var textElement = element.Element("text") ?? throw new NotSupportedException("choice must have text");
             var eventElement = element.Element("event");
 
             if (eventElement is null)
@@ -121,12 +113,7 @@ namespace EventCore
             }
 
             var ftlEvent = EventElementToModel(eventElement);
-            return new FTLChoice(element.GetAttribute("hidden") == "true",
-                index,
-                textElement.TextContent,
-                ftlEvent,
-                element.GetAttribute("req"),
-                element);
+            return new FTLChoice(index, ftlEvent, element);
         }
     }
 }

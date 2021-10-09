@@ -10,6 +10,22 @@ namespace EventCore
     {
         public static readonly FTLEvent Nothing = new FTLEvent();
 
+        //possible valid attributes
+        private static readonly string[] ValidAttributes = new[] { "name", "hidden", "unique" };
+
+        private static readonly string[] ValidChildElements = new[]
+        {
+            "text", "item_modify", "choice", "damage", "autoReward", "boarders", "removeCrew", "modifyPursuit", "ship",
+            "environment", "crewMember", "drone", "weapon", "augment", "event", "store", "distressBeacon", "quest",
+            "preventQuest", "preventFleet", "beaconType", "unlockCustomShip", "hiddenAug", "remove", "reveal_map",
+            "removeNebula", "img", "playSound", "disableScrapScore", "changeBackground", "loadEventList",
+            "triggeredEvent", "status", "instantEscape", "restartEvent", "upgrade", "secretSector", "customFleet",
+            "jumpEvent", "secretSectorWarp", "checkCargo", "transformRace", "goToFlagship", "fleet", "repair",
+            "recallBoarders", "loadEvent", "surrender", "superBarrage", "superDrones", "lose", "clearSuperDrones",
+            "aggressive", "removeHazards", "noQuestText", "replaceSector", "clearTriggeredEvent", "removeItem",
+            "superShields", "runFromFleet", "preventBossFleet", "resetFtl", "enemyDamage", "system", "escape"
+        };
+
         private FTLEvent()
         {
         }
@@ -64,6 +80,8 @@ namespace EventCore
             }
         }
 
+        public bool Unique => Element.GetAttribute("unique") == "true";
+
         public bool HasReward => Element.Element("autoReward") != null;
         public string? RewardLevel => Element.Element("autoReward")?.GetAttribute("level");
         public string? RewardType => Element.Element("autoReward")?.TextContent;
@@ -71,6 +89,9 @@ namespace EventCore
         public bool HasCrew => Element.Element("crewMember") != null;
         public int CrewAmount => int.Parse(Element.Element("crewMember")?.GetAttribute("amount") ?? "0");
         public string? CrewClass => Element.Element("crewMember")?.GetAttribute("class");
+        public string? CrewName => Element.Element("crewMember")?.TextContent;
+
+        public string? UnlockShip => Element.Element("unlockCustomShip")?.TextContent;
 
         public virtual List<FTLChoice> Choices { get; } = new();
         public virtual bool IsUnknownRef => false;
@@ -88,7 +109,7 @@ namespace EventCore
             _refName = refName;
         }
 
-        public override List<FTLChoice> Choices => ActualEvent!.Choices;
+        public override List<FTLChoice> Choices => ActualEvent?.Choices ?? base.Choices;
 
         public override string? Name
         {

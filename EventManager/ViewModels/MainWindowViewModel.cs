@@ -24,6 +24,7 @@ namespace EventManager.ViewModels
             var modLoader = new ModLoader(@"D:\Games\FTL Stuff\EventManager\Tests\TestData\data");
 
             _modRoot = await modLoader.Load();
+            GC.Collect();
             EventsList.Root.OnNext(_modRoot);
         }
 

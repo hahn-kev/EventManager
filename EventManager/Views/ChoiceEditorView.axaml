@@ -1,0 +1,36 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:EventManager.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignWidth="400"
+             d:DesignHeight="450"
+             x:Class="EventManager.Views.ChoiceEditorView">
+    <Design.DataContext>
+        <vm:ChoiceEditorViewModel/>
+    </Design.DataContext>
+
+    <Border BorderBrush="Black"
+            Margin="0 5 0 0"
+            BorderThickness="1"
+            CornerRadius="3"
+            Padding="4">
+        <StackPanel>
+            <TextBlock Text="Choice"/>
+            <TextBox Text="{Binding Text}" TextWrapping="Wrap"/>
+
+            <TextBlock Text="Event"/>
+            <ComboBox SelectedItem="{Binding EventType}"
+                      Items="{Binding EventTypes}"/>
+            <TextBox Text="{Binding EventName}"
+                     Watermark="event name"
+                     IsVisible="{Binding ShowEventNameEditor}"/>
+            <TextBlock>Requirement</TextBlock>
+            <TextBox Text="{Binding Requirement}"/>
+
+            <CheckBox IsChecked="{Binding Hidden}"
+                      Content="Hidden"/>
+        </StackPanel>
+    </Border>
+</UserControl>

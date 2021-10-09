@@ -4,6 +4,7 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using Avalonia.Input;
+using Avalonia.Metadata;
 using DynamicData.Binding;
 using EventCore;
 using ReactiveUI;
@@ -14,9 +15,11 @@ namespace EventManager.ViewModels
     {
         public EventEditorViewModel()
         {
+            SelectedChoiceVm = this.ObservableForProperty(model => model.SelectedChoice).Select(change =>
+                change.Value == null ? null : new ChoiceEditorViewModel(change.Value));
         }
 
-        public EventEditorViewModel(FTLEvent @event)
+        public EventEditorViewModel(FTLEvent @event) : this()
         {
             Event = @event;
         }
@@ -63,8 +66,10 @@ namespace EventManager.ViewModels
         public FTLChoice? SelectedChoice
         {
             get => _selectedChoice;
-            set => this.RaiseAndSetIfChanged(ref _selectedChoice, value);
+            set { this.RaiseAndSetIfChanged(ref _selectedChoice, value); }
         }
+
+        public IObservable<ChoiceEditorViewModel?> SelectedChoiceVm { get; }
 
         public IObservable<string?> RawText =>
             Observable.Return(this).Concat(this.WhenAnyPropertyChanged())
