@@ -20,7 +20,7 @@
         </Style>
     </UserControl.Styles>
 
-    <Grid ColumnDefinitions="*, 200"
+    <Grid ColumnDefinitions="*, Auto"
           RowDefinitions="Auto, Auto, Auto, *">
         <Button Grid.Row="0"
                 Grid.Column="0"
@@ -39,7 +39,7 @@
         </StackPanel>
         <c:AutoGrid Grid.Row="1"
                     Grid.Column="0"
-                    RowCount="5"
+                    RowCount="6"
                     RowHeight="Auto"
                     ChildMargin="2"
                     ColumnDefinitions="Auto, *, *">
@@ -79,6 +79,11 @@
                      Watermark="Name"
                      Grid.ColumnSpan="2"
                      IsEnabled="{Binding !!Event.UnlockShip}"/>
+            <!-- Event Ref -->
+            <TextBlock IsVisible="{Binding IsEventRef}">Load Event:</TextBlock>
+            <TextBox Text="{Binding EventRef.RefName}"
+                     Grid.ColumnSpan="2"
+                     IsVisible="{Binding IsEventRef}"/>
 
         </c:AutoGrid>
 
@@ -97,38 +102,33 @@
                  TextWrapping="Wrap"
                  Text="{Binding RawText^}"/>
 
+        <!-- Choices -->
         <Border Grid.Column="1"
                 Grid.Row="0"
                 Grid.RowSpan="4"
+                Width="200"
+                IsVisible="{Binding HasChoices}"
                 BorderThickness="5">
             <StackPanel>
-                <!-- Choices -->
-                <StackPanel IsVisible="{Binding HasChoices}">
-                    <TextBlock>Choices:</TextBlock>
-                    <ListBox Items="{Binding Choices}"
-                             Height="150"
-                             SelectedItem="{Binding SelectedChoice}">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Margin="0 5"
-                                            Orientation="Horizontal">
-                                    <TextBlock Padding="0 0 4 0"
-                                               Text="{Binding Index}"/>
-                                    <TextBlock Text="{Binding Text}"/>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                    <Panel IsVisible="{Binding SelectedChoice, Converter={x:Static ObjectConverters.IsNotNull}}">
-                        <views:ChoiceEditorView DataContext="{Binding SelectedChoiceVm^}"/>
-                    </Panel>
-                </StackPanel>
+                <TextBlock>Choices:</TextBlock>
+                <ListBox Items="{Binding Choices}"
+                         Height="150"
+                         SelectedItem="{Binding SelectedChoice}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Margin="0 5"
+                                        Orientation="Horizontal">
+                                <TextBlock Padding="0 0 4 0"
+                                           Text="{Binding Index}"/>
+                                <TextBlock Text="{Binding Text}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <Panel IsVisible="{Binding SelectedChoice, Converter={x:Static ObjectConverters.IsNotNull}}">
+                    <views:ChoiceEditorView DataContext="{Binding SelectedChoiceVm^}"/>
+                </Panel>
 
-                <!-- Event Ref -->
-                <StackPanel IsVisible="{Binding IsEventRef}">
-                    <TextBlock>Load Event:</TextBlock>
-                    <TextBox Text="{Binding EventRef.RefName}"></TextBox>
-                </StackPanel>
             </StackPanel>
         </Border>
     </Grid>
