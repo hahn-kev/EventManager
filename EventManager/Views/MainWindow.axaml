@@ -4,25 +4,39 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="using:EventManager.ViewModels"
         xmlns:views="clr-namespace:EventManager.Views"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        xmlns:styles="clr-namespace:Material.Styles;assembly=Material.Styles"
+        mc:Ignorable="d"
+        d:DesignWidth="800"
+        d:DesignHeight="450"
         x:Class="EventManager.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
         Title="EventManager">
 
     <Design.DataContext>
-        <vm:MainWindowViewModel />
+        <vm:MainWindowViewModel/>
     </Design.DataContext>
-    <Grid RowDefinitions="Auto, *" ColumnDefinitions="Auto,*">
-        <StackPanel Orientation="Horizontal">
+    <Grid RowDefinitions="Auto, *"
+          ColumnDefinitions="Auto,*"
+          Margin="8 0 0 8">
+        <StackPanel Orientation="Horizontal" Margin="0">
 
-        <Button Grid.Row="0" Grid.Column="0" Command="{Binding Load}">Load</Button>
-        <Button Grid.Row="0" Grid.Column="0" Command="{Binding Save}">Save</Button>
+            <Button Margin="4" Command="{Binding Load}">
+                Load
+            </Button>
+            <Button Margin="4" Command="{Binding Save}">
+                Save
+            </Button>
         </StackPanel>
-        <views:EventsList Grid.Row="1" Grid.Column="0"
-                          Margin="0 10 0 0"
-                          DataContext="{Binding EventsList}" />
-        <Panel Grid.Row="1" Grid.Column="1" IsVisible="{Binding EventsList.HasSelectedEvent^}">
-            <views:EventEditorTree DataContext="{Binding EditorTreeViewModel}" />
+        <views:EventsList Grid.Row="1"
+                          Grid.Column="0"
+                          ClipToBounds="False"
+                          Width="300"
+                          DataContext="{Binding EventsList}"/>
+
+        <Panel Grid.Row="1"
+               Grid.Column="1"
+               IsVisible="{Binding EventsList.HasSelectedEvent^}">
+            <views:EventEditorTree  DataContext="{Binding EditorTreeViewModel}"/>
         </Panel>
     </Grid>
 

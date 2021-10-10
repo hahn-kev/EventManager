@@ -3,20 +3,30 @@
              xmlns:vm="using:EventManager.ViewModels"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             Name="view"
+             xmlns:styles="clr-namespace:Material.Styles;assembly=Material.Styles"
+             mc:Ignorable="d"
+             d:DesignWidth="800"
+             d:DesignHeight="450"
              x:Class="EventManager.Views.EventsList">
     <Design.DataContext>
-        <vm:EventsListViewModel />
+        <vm:EventsListViewModel/>
     </Design.DataContext>
-    <DockPanel>
-        <TextBox DockPanel.Dock="Top" Watermark="filter" Text="{Binding Filter ,Mode=TwoWay}" />
-        <ListBox Width="300" Items="{Binding Events^}" SelectedItem="{Binding SelectedEvent}">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <TextBlock Margin="5" Text="{Binding Name}" />
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-    </DockPanel>
+    <styles:Card Padding="0">
+        <DockPanel>
+            <TextBox DockPanel.Dock="Top"
+                     Watermark="Filter"
+                     Margin="8 8 8 0"
+                     Text="{Binding Filter ,Mode=TwoWay}"/>
+
+            <ListBox Items="{Binding Events^}"
+                     SelectedItem="{Binding SelectedEvent}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </DockPanel>
+    </styles:Card>
+
 </UserControl>

@@ -5,6 +5,7 @@
              xmlns:views="using:EventManager.Views"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:wpf="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
              mc:Ignorable="d"
              d:DesignWidth="500"
              d:DesignHeight="450"
@@ -24,6 +25,8 @@
           RowDefinitions="Auto, Auto, Auto, *">
         <Button Grid.Row="0"
                 Grid.Column="0"
+                Classes="Outline"
+                HorizontalAlignment="Left"
                 VerticalAlignment="Top"
                 Command="{Binding Close}">
             X
@@ -31,7 +34,7 @@
         <StackPanel Grid.Row="0"
                     Orientation="Horizontal">
             <TextBlock VerticalAlignment="Center"
-                       Padding="40 0 4 0">
+                       Padding="48 0 4 0">
                 File:
             </TextBlock>
             <TextBlock VerticalAlignment="Center"
@@ -44,14 +47,18 @@
                     ChildMargin="2"
                     ColumnDefinitions="Auto, *, *">
 
-            <TextBlock>Name:</TextBlock>
-            <TextBox Grid.ColumnSpan="2"
+            <TextBox Grid.ColumnSpan="3"
+                     wpf:TextFieldAssist.Label="Name"
+                     UseFloatingWatermark="True"
                      Text="{Binding Name}"/>
 
-            <TextBlock>Text:</TextBlock>
-            <TextBox Height="60"
-                     Grid.ColumnSpan="2"
+            <TextBox MaxHeight="100"
+                     Grid.ColumnSpan="3"
+
+                     wpf:TextFieldAssist.Label="Text"
+                     UseFloatingWatermark="True"
                      Text="{Binding Text}"
+                     AcceptsReturn="True"
                      TextWrapping="Wrap"/>
 
             <CheckBox IsChecked="{Binding Event.HasCrew}">
