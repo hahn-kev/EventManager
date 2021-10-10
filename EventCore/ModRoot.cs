@@ -17,7 +17,7 @@ namespace EventCore
             }
         }
 
-        public string FolderPath { get; set; }
+        public string FolderPath { get; }
 
         public Dictionary<string, ModFile> ModFiles { get; }
         public IEnumerable<FTLEvent> TopLevelEvents => ModFiles.Values.SelectMany(mf => mf.Events.Values);

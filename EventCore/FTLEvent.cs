@@ -8,7 +8,6 @@ namespace EventCore
 {
     public class FTLEvent
     {
-        public static readonly FTLEvent Nothing = new FTLEvent();
 
         //possible valid attributes
         private static readonly string[] ValidAttributes = new[] { "name", "hidden", "unique" };
@@ -26,9 +25,6 @@ namespace EventCore
             "superShields", "runFromFleet", "preventBossFleet", "resetFtl", "enemyDamage", "system", "escape"
         };
 
-        private FTLEvent()
-        {
-        }
 
         protected FTLEvent(IElement xElement, ModFile modFile)
         {
@@ -41,14 +37,13 @@ namespace EventCore
         {
             _name = name;
             Choices = choices;
-            ModFile = modFile;
         }
 
         public IElement Element { get; init; }
         public ModFile ModFile { get; set; }
         private string? _name;
 
-        public virtual string? Name
+        public string? Name
         {
             get => _name;
             set
@@ -100,18 +95,21 @@ namespace EventCore
 
     public class FTLEventRef : FTLEvent
     {
-        private FTLEvent? ActualEvent;
+        public FTLEvent? ActualEvent { get; private set; }
         private string _refName;
 
-        public FTLEventRef(IElement xElement, string refName, ModFile modFile) : base(xElement, modFile)
+        public FTLEventRef(IElement xElement, string refName, ModFile modFile) : base(xElement,
+            xElement.GetAttribute("name"),
+            new(),
+            modFile)
         {
             Element = xElement;
             _refName = refName;
         }
 
-        public override List<FTLChoice> Choices => ActualEvent?.Choices ?? base.Choices;
+        // public override List<FTLChoice> Choices => ActualEvent?.Choices ?? base.Choices;
 
-        public override string? Name
+        public string RefName
         {
             get => _refName;
             set
@@ -137,7 +135,9 @@ namespace EventCore
 
         public void FindRef(Dictionary<string, FTLEvent> events)
         {
-            events.TryGetValue(_refName, out ActualEvent);
+            FTLEvent? foundEvent;
+            events.TryGetValue(_refName, out foundEvent);
+            ActualEvent = foundEvent;
         }
     }
 }

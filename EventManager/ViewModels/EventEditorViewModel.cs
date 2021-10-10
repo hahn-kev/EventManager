@@ -60,6 +60,8 @@ namespace EventManager.ViewModels
 
         public List<FTLChoice> Choices => Event.Choices;
         public bool HasChoices => Choices.Count > 0;
+        public bool IsEventRef => Event.IsRef;
+        public FTLEventRef? EventRef => Event as FTLEventRef;
 
         private FTLChoice? _selectedChoice;
 

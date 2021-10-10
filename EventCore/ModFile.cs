@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using AngleSharp.Dom;
@@ -16,9 +17,9 @@ namespace EventCore
 
         private IDocument? _document;
 
-        public IDocument? Document
+        public IDocument Document
         {
-            get => _document;
+            get => _document ?? throw new NullReferenceException("document is null");
             set
             {
                 _document = value;

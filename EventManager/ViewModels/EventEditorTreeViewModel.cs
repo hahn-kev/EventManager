@@ -35,6 +35,9 @@ namespace EventManager.ViewModels
             });
 
             EditorViewModels.Add(editorViewModel);
+
+            if (ftlEvent is FTLEventRef { ActualEvent: { } } eventRef)
+                AddNewEventOnEnd(eventRef.ActualEvent);
         }
 
         public void ChoiceChanged(FTLEvent ftlEvent, int depth)

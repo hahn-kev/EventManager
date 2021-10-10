@@ -18,6 +18,8 @@ namespace EventCore
         public List<FTLEventRef> EventRefs { get; } = new();
         public ModFile ModFile { get; set; }
 
+        private bool _loaded;
+
         public ModFileLoader(string filePath)
         {
             _filePath = filePath;
@@ -26,6 +28,9 @@ namespace EventCore
 
         public void Load()
         {
+            if (_loaded) return;
+            _loaded = true;
+
             var xmlParser = new XmlParser(new XmlParserOptions
             {
                 IsSuppressingErrors = true
@@ -43,11 +48,12 @@ namespace EventCore
             }
         }
 
+        private static readonly string[] eventParentTags = new[] { "FTL", "events" };
         private IEnumerable<FTLEvent> ParseEvents(IEnumerable<IElement> elements)
         {
             foreach (var xElement in elements)
             {
-                if (xElement.TagName == "FTL")
+                if (eventParentTags.Contains(xElement.TagName, StringComparer.OrdinalIgnoreCase))
                 {
                     foreach (var @event in ParseEvents(xElement.Children))
                     {
@@ -78,7 +84,7 @@ namespace EventCore
 
             var ftlEvent = Inner();
 
-            if (ftlEvent.Name is not null && ftlEvent is not FTLEventRef) Events[ftlEvent.Name] = ftlEvent;
+            if (ftlEvent.Name is not null) Events[ftlEvent.Name] = ftlEvent;
             if (ftlEvent is FTLEventRef @ref) EventRefs.Add(@ref);
             return ftlEvent;
         }

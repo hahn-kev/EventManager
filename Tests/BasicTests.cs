@@ -145,7 +145,7 @@ namespace Tests
         }
 
         [Fact]
-        public async Task SpecificEvent()
+        public void SpecificEvent()
         {
             var eventName = "LANIUS_LANGUAGE";
 
@@ -184,6 +184,14 @@ namespace Tests
 
             var storageCheck = refuseChoice.Event.Choices[0];
             storageCheck.Event.Name.ShouldBe("STORAGE_CHECK");
+        }
+
+        [Fact]
+        public async Task HyperspaceEventsPresent()
+        {
+            var modRoot = await new ModLoader(TestData).Load();
+            modRoot.EventsLookup.ShouldContainKey("SHOWDOWN_WIN");
+            // var ftlEvent = modRoot.EventsLookup["SHOWDOWN_WIN"];
         }
     }
 }
