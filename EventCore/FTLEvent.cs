@@ -68,7 +68,7 @@ namespace EventCore
         public bool Unique
         {
             get => Element.GetAttribute("unique") == "true";
-            set => Element.SetAttribute("unique", value ? "true" : "false");
+            set => Element.SetAttribute("unique", value);
         }
 
         public bool HasReward
@@ -163,6 +163,24 @@ namespace EventCore
         }
 
         public FTLQuestDefinition? QuestDefinition { get; private set; }
+
+        public bool HasShip
+        {
+            get => Element.Element("ship") != null;
+            set => Element.ToggleChildElement("ship", value);
+        }
+
+        public bool ShipHostile
+        {
+            get => Element.Element("ship")?.GetAttribute("hostile") == "true";
+            set => Element.Element("ship")?.SetAttribute("hostile", value);
+        }
+
+        public string ShipLoad
+        {
+            get => Element.Element("ship")?.GetAttribute("load") ?? "";
+            set => Element.Element("ship")?.SetAttribute("load", value);
+        }
 
         public List<FTLChoice> Choices { get; } = new();
         public virtual bool IsUnknownRef => false;

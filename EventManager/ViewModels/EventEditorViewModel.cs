@@ -96,10 +96,23 @@ namespace EventManager.ViewModels
             }
         }
 
-        [DependsOn(nameof(QuestMode))]
-        public bool HasQuestDefinition => Event.QuestMode == FTLEvent.QuestModeEnum.Define;
+        public IObservable<bool> HasQuestDefinition =>
+            this.WhenValueChanged(model => model.QuestMode)
+                .Select(mode => mode == FTLEvent.QuestModeEnum.Define);
 
-        [DependsOn(nameof(QuestMode))]
-        public bool HasQuestStart => Event.QuestMode == FTLEvent.QuestModeEnum.Start;
+        public IObservable<bool> HasQuestStart =>
+            this.WhenValueChanged(model => model.QuestMode)
+                .Select(mode => mode == FTLEvent.QuestModeEnum.Start);
+
+        public bool HasShip
+        {
+            get => Event.HasShip;
+            set
+            {
+                this.RaisePropertyChanging();
+                Event.HasShip = value;
+                this.RaisePropertyChanged();
+            }
+        }
     }
 }

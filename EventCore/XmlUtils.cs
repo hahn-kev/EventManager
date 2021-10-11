@@ -40,11 +40,12 @@ namespace EventCore
 
         public static void ToggleChildElement(this IElement element, string tagName, bool value)
         {
-            if (value)
+            var child = element.Element(tagName);
+            if (value && child == null)
             {
                 element.AppendNew(tagName);
             }
-            else if (element.Element(tagName) is {} child)
+            else if (!value && child != null)
             {
                 element.RemoveChild(child);
             }
@@ -76,6 +77,11 @@ namespace EventCore
                 element.AppendChild(childElement);
             }
             return childElement;
+        }
+
+        public static void SetAttribute(this IElement element, string name, bool value)
+        {
+            element.SetAttribute(name, value ? "true" : "false");
         }
     }
 }

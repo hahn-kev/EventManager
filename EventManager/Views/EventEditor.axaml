@@ -23,7 +23,7 @@
     </UserControl.Styles>
 
     <Grid ColumnDefinitions="*, Auto"
-          RowDefinitions="Auto, Auto, *">
+          RowDefinitions="Auto, Auto, Auto">
         <Button Grid.Row="0"
                 Grid.Column="0"
                 Padding="6"
@@ -44,11 +44,11 @@
         </StackPanel>
         <c:AutoGrid Grid.Row="1"
                     Grid.Column="0"
-                    RowCount="5"
+                    RowCount="6"
                     RowHeight="Auto"
                     ChildMargin="5"
                     ChildVerticalAlignment="Center"
-                    ColumnDefinitions=" *">
+                    ColumnDefinitions="*">
             <!-- ReSharper disable Xaml.MissingGridIndex -->
 
             <TextBox Classes="Filled"
@@ -106,19 +106,18 @@
             </Expander>
 
             <Expander Header="Quest"
-                      Margin="0 4"
-                      IsExpanded="True">
+                      Margin="0 4">
                 <c:AutoGrid ColumnDefinitions="* *"
                             RowCount="9"
                             Margin="4 8 8 4">
                     <c:AutoGrid.Styles>
                         <Style Selector="CheckBox, TextBox">
-                            <Setter Property="IsVisible" Value="{Binding HasQuestDefinition}"></Setter>
+                            <Setter Property="IsVisible"
+                                    Value="{Binding HasQuestDefinition^}"/>
                         </Style>
                     </c:AutoGrid.Styles>
-                    <TextBlock Classes="DontHide">Mode</TextBlock>
-                    <ComboBox Classes="DontHide"
-                              SelectedItem="{Binding Event.QuestMode}"
+                    <TextBlock>Mode</TextBlock>
+                    <ComboBox SelectedItem="{Binding QuestMode}"
                               Items="{Binding QuestModes}"/>
 
                     <TextBox Classes="Filled"
@@ -156,30 +155,49 @@
                 </c:AutoGrid>
             </Expander>
 
-
+            <Expander Header="Ship"
+                      Margin="0 4">
+                <c:AutoGrid RowCount="2"
+                            ColumnDefinitions="* *"
+                            Margin="4 8 8 4">
+                    <CheckBox IsChecked="{Binding HasShip}">
+                        Has Ship
+                    </CheckBox>
+                    <CheckBox IsChecked="{Binding Event.ShipHostile}"
+                              IsVisible="{Binding HasShip}">
+                        Hostile
+                    </CheckBox>
+                    <TextBox Grid.ColumnSpan="2"
+                             Text="{Binding Event.ShipLoad}"
+                             wpf:TextFieldAssist.Label="Load Ship"
+                             UseFloatingWatermark="True"
+                             Classes="Filled"
+                             IsVisible="{Binding HasShip}"/>
+                </c:AutoGrid>
+            </Expander>
             <!-- Event Ref -->
             <TextBox Text="{Binding EventRef.RefName}"
                      wpf:TextFieldAssist.Label="Load Event"
                      UseFloatingWatermark="True"
-                     Grid.ColumnSpan="3"
                      Classes="Filled"
                      IsVisible="{Binding IsEventRef}"/>
-
-
             <!-- ReSharper restore Xaml.MissingGridIndex -->
         </c:AutoGrid>
-        <TextBox Grid.Row="2"
-                 Grid.Column="0"
-                 IsVisible="False"
-                 wpf:TextFieldAssist.Label="Raw XML"
-                 UseFloatingWatermark="True"
-                 Classes="Filled"
-                 VerticalAlignment="Top"
-                 AcceptsReturn="True"
-                 AcceptsTab="True"
-                 FontFamily="Consolas"
-                 TextWrapping="Wrap"
-                 Text="{Binding RawText^}"/>
+
+        <Expander Grid.Row="2"
+                  Grid.Column="0"
+                  Margin="0 4"
+                  Header="XML">
+            <TextBox IsVisible="True"
+                     Height="200"
+                     Classes="Filled"
+                     AcceptsReturn="True"
+                     AcceptsTab="True"
+                     FontFamily="Consolas"
+                     TextWrapping="Wrap"
+                     Text="{Binding RawText^}"/>
+        </Expander>
+
 
         <!-- Choices -->
         <Border Grid.Column="1"
