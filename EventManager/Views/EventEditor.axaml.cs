@@ -17,11 +17,5 @@ namespace EventManager.Views
         {
             AvaloniaXamlLoader.Load(this);
         }
-
-        private void InputElement_OnTextInput(object? sender, TextInputEventArgs e)
-        {
-            var eventEditorViewModel = DataContext as EventEditorViewModel;
-            eventEditorViewModel?.SetRawText(e.Text ?? "");
-        }
     }
 }

@@ -8,21 +8,20 @@ namespace EventCore
 {
     public class FTLEvent
     {
-
         //possible valid attributes
         private static readonly string[] ValidAttributes = new[] { "name", "hidden", "unique" };
 
         private static readonly string[] ValidChildElements = new[]
         {
-            "text", "item_modify", "choice", "damage", "autoReward", "boarders", "removeCrew", "modifyPursuit", "ship",
-            "environment", "crewMember", "drone", "weapon", "augment", "event", "store", "distressBeacon", "quest",
-            "preventQuest", "preventFleet", "beaconType", "unlockCustomShip", "hiddenAug", "remove", "reveal_map",
-            "removeNebula", "img", "playSound", "disableScrapScore", "changeBackground", "loadEventList",
-            "triggeredEvent", "status", "instantEscape", "restartEvent", "upgrade", "secretSector", "customFleet",
-            "jumpEvent", "secretSectorWarp", "checkCargo", "transformRace", "goToFlagship", "fleet", "repair",
-            "recallBoarders", "loadEvent", "surrender", "superBarrage", "superDrones", "lose", "clearSuperDrones",
-            "aggressive", "removeHazards", "noQuestText", "replaceSector", "clearTriggeredEvent", "removeItem",
-            "superShields", "runFromFleet", "preventBossFleet", "resetFtl", "enemyDamage", "system", "escape"
+            "text", "quest", "ship", "environment", "choice", "weapon", "unlockCustomShip", "autoReward", "item_modify",
+            "damage", "upgrade", "modifyPursuit", "crewMember", "img", "removeCrew", "status", "distressBeacon",
+            "restartEvent", "drone", "beaconType", "recallBoarders", "loadEvent", "instantEscape", "customFleet",
+            "preventQuest", "preventFleet", "augment", "store", "event", "triggeredEvent", "hiddenAug", "boarders",
+            "remove", "reveal_map", "surrender", "aggressive", "removeHazards", "secretSectorWarp", "secretSector",
+            "checkCargo", "transformRace", "changeBackground", "playSound", "jumpEvent", "clearTriggeredEvent",
+            "enemyDamage", "lose", "fleet", "system", "noQuestText", "replaceSector", "superBarrage", "superDrones",
+            "clearSuperDrones", "removeItem", "loadEventList", "superShields", "runFromFleet", "preventBossFleet",
+            "resetFtl", "win", "disableScrapScore", "unlockShip"
         };
 
 
@@ -30,6 +29,10 @@ namespace EventCore
         {
             ModFile = modFile;
             Element = xElement;
+            if (QuestMode == QuestModeEnum.Define)
+            {
+                QuestDefinition = new FTLQuestDefinition(Element.Element("quest") ?? throw new NullReferenceException("quest tag not found"));
+            }
         }
 
         public FTLEvent(IElement xElement, string? name, List<FTLChoice> choices, ModFile modFile) : this(xElement,
@@ -59,36 +62,109 @@ namespace EventCore
         public string? Text
         {
             get => Element.Element("text")?.TextContent;
+            set => Element.SetChildElementText("text", value ?? "", true, true);
+        }
+
+        public bool Unique
+        {
+            get => Element.GetAttribute("unique") == "true";
+            set => Element.SetAttribute("unique", value ? "true" : "false");
+        }
+
+        public bool HasReward
+        {
+            get => Element.Element("autoReward") != null;
             set
             {
-                var element = Element.Element("text");
-                if (element != null)
+                if (value == HasReward) return;
+                Element.ToggleChildElement("autoReward", value);
+            }
+        }
+
+        public string? RewardLevel
+        {
+            get => Element.Element("autoReward")?.GetAttribute("level");
+            set => Element.Element("autoReward")?.SetAttribute("level", value ?? "");
+        }
+
+        public string? RewardType
+        {
+            get => Element.Element("autoReward")?.TextContent;
+            set => Element.SetChildElementText("autoReward", value ?? "");
+        }
+
+        public bool HasCrew
+        {
+            get => Element.Element("crewMember") != null;
+            set => Element.ToggleChildElement("crewMember", value);
+        }
+
+        public int CrewAmount
+        {
+            get => int.Parse(Element.Element("crewMember")?.GetAttribute("amount") ?? "0");
+            set => Element.Element("crewMember")?.SetAttribute("amount", value.ToString());
+        }
+
+        public string? CrewClass
+        {
+            get => Element.Element("crewMember")?.GetAttribute("class");
+            set => Element.Element("crewMember")?.SetAttribute("class", value ?? "");
+        }
+
+        public string? CrewName
+        {
+            get => Element.Element("crewMember")?.TextContent;
+            set => Element.SetChildElementText("crewMember", value ?? "");
+        }
+
+        public enum QuestModeEnum
+        {
+            None,
+            Start,
+            Define
+        }
+
+        public QuestModeEnum QuestMode
+        {
+            get
+            {
+                var questElement = Element.Element("quest");
+                if (questElement == null) return QuestModeEnum.None;
+
+                return questElement.HasAttribute("event") ? QuestModeEnum.Start : QuestModeEnum.Define;
+            }
+            set
+            {
+                var currentMode = QuestMode;
+                if (currentMode == value) return;
+                if (value == QuestModeEnum.None)
                 {
-                    element.TextContent = value ?? "";
+                    Element.ToggleChildElement("quest", false);
+                    return;
+                }
+
+                var questElement = Element.Element("quest") ?? Element.AppendNew("quest");
+                if (value == QuestModeEnum.Start)
+                {
+                    questElement.SetAttribute("event", "");
                 }
                 else
                 {
-                    var htmlElement = Element.Owner!.CreateElement("text");
-                    htmlElement.TextContent = value ?? "";
-                    Element.AppendChild(htmlElement);
+                    questElement.RemoveAttribute("event");
+                    QuestDefinition = new FTLQuestDefinition(questElement);
                 }
             }
         }
 
-        public bool Unique => Element.GetAttribute("unique") == "true";
+        public string? QuestEvent
+        {
+            get => Element.Element("quest")?.GetAttribute("event");
+            set => Element.Element("quest")?.SetAttribute("event", value ?? "");
+        }
 
-        public bool HasReward => Element.Element("autoReward") != null;
-        public string? RewardLevel => Element.Element("autoReward")?.GetAttribute("level");
-        public string? RewardType => Element.Element("autoReward")?.TextContent;
+        public FTLQuestDefinition? QuestDefinition { get; private set; }
 
-        public bool HasCrew => Element.Element("crewMember") != null;
-        public int CrewAmount => int.Parse(Element.Element("crewMember")?.GetAttribute("amount") ?? "0");
-        public string? CrewClass => Element.Element("crewMember")?.GetAttribute("class");
-        public string? CrewName => Element.Element("crewMember")?.TextContent;
-
-        public string? UnlockShip => Element.Element("unlockCustomShip")?.TextContent;
-
-        public virtual List<FTLChoice> Choices { get; } = new();
+        public List<FTLChoice> Choices { get; } = new();
         public virtual bool IsUnknownRef => false;
         public virtual bool IsRef => false;
     }
@@ -121,8 +197,7 @@ namespace EventCore
                 }
                 else
                 {
-                    var loadEventElement = Element.Element("loadEvent");
-                    loadEventElement.TextContent = _refName;
+                    Element.SetChildElementText("loadEvent", _refName, true);
                 }
 
                 FindRef(ModFile.ModRoot?.EventsLookup ?? ModFile.Events);

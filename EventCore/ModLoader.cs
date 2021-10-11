@@ -14,6 +14,27 @@ namespace EventCore
         private readonly string _folderPath;
         private List<FTLEventRef> EventRefs = new();
 
+        private static readonly string[] DefaultEventFiles = new[]
+        {
+            "events.xml",
+            "events_boss.xml",
+            "events_crystal.xml",
+            "events_engi.xml",
+            "events_fuel.xml",
+            "events_imageList.xml",
+            "events_mantis.xml",
+            "events_nebula.xml",
+            "events_pirate.xml",
+            "events_rebel.xml",
+            "events_rock.xml",
+            "events_ships.xml",
+            "events_slug.xml",
+            "events_zoltan.xml",
+            "dlcEvents.xml",
+            "dlcEventsOverwrite.xml",
+            "dlcEvents_anaerobic.xml",
+        };
+
         public ModLoader(string folderPath)
         {
             _folderPath = folderPath;
@@ -53,21 +74,18 @@ namespace EventCore
         private IEnumerable<string> ListEventFiles(out ModFileLoader? hyperspaceLoader)
         {
             var hyperspacePath = Path.Combine(_folderPath, "hyperspace.xml");
+            var allDefaultEventFiles = DefaultEventFiles.Concat(DefaultEventFiles.Select(fileName => fileName + ".append"));
             if (!File.Exists(hyperspacePath))
             {
                 hyperspaceLoader = null;
-                return new[]
-                {
-                    "events.xml",
-                    "events.xml.append"
-                };
+                return allDefaultEventFiles;
             }
 
             hyperspaceLoader = new ModFileLoader(hyperspacePath);
             hyperspaceLoader.Load();
             var hyperspaceDocument = hyperspaceLoader.ModFile.Document;
             var eventFiles = hyperspaceDocument.QuerySelectorAll("eventFile").ToArray();
-            return eventFiles.Select(e => $"events_{e.TextContent}.xml");
+            return eventFiles.Select(e => $"events_{e.TextContent}.xml").Concat(allDefaultEventFiles);
         }
 
         private void LinkEventRefs(Dictionary<string, FTLEvent> ftlEvents)

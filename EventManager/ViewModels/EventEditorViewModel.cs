@@ -81,5 +81,25 @@ namespace EventManager.ViewModels
         {
             Event.Element.OuterHtml = rawText;
         }
+
+        public FTLEvent.QuestModeEnum[] QuestModes { get; } = new[]
+            { FTLEvent.QuestModeEnum.None, FTLEvent.QuestModeEnum.Start, FTLEvent.QuestModeEnum.Define };
+
+        public FTLEvent.QuestModeEnum QuestMode
+        {
+            get => Event.QuestMode;
+            set
+            {
+                this.RaisePropertyChanging();
+                Event.QuestMode = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        [DependsOn(nameof(QuestMode))]
+        public bool HasQuestDefinition => Event.QuestMode == FTLEvent.QuestModeEnum.Define;
+
+        [DependsOn(nameof(QuestMode))]
+        public bool HasQuestStart => Event.QuestMode == FTLEvent.QuestModeEnum.Start;
     }
 }
