@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Xml.Linq;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
@@ -24,6 +25,35 @@ namespace EventCore
             "resetFtl", "win", "disableScrapScore", "unlockShip"
         };
 
+        public static FTLEvent NewEvent(IElement element, ModFile modFile, List<FTLChoice> choices)
+        {
+            if (IsEventRef(element, out var name)) return new FTLEventRef(element, name, modFile);
+            // if (element) return FTLEvent.Nothing;
+
+            var xAttribute = element.GetAttribute("name");
+            return new FTLEvent(element, xAttribute, choices, modFile);
+        }
+
+
+        public static bool IsEventRef(IElement element, [NotNullWhen(true)] out string? name)
+        {
+            var loadAttr = element.GetAttribute("load");
+            if (loadAttr is not null)
+            {
+                name = loadAttr;
+                return true;
+            }
+
+            var loadEventElement = element.Element("loadEvent");
+            if (loadEventElement is not null)
+            {
+                name = loadEventElement.TextContent;
+                return true;
+            }
+
+            name = null;
+            return false;
+        }
 
         protected FTLEvent(IElement xElement, ModFile modFile)
         {
@@ -43,7 +73,9 @@ namespace EventCore
         }
 
         public IElement Element { get; init; }
+
         public ModFile ModFile { get; set; }
+
         private string? _name;
 
         public string? Name
@@ -139,7 +171,7 @@ namespace EventCore
                 if (currentMode == value) return;
                 if (value == QuestModeEnum.None)
                 {
-                    Element.ToggleChildElement("quest", false);
+                    Element.RemoveChildElement("quest");
                     return;
                 }
 
@@ -179,11 +211,24 @@ namespace EventCore
         public string ShipLoad
         {
             get => Element.Element("ship")?.GetAttribute("load") ?? "";
-            set => Element.Element("ship")?.SetAttribute("load", value);
+            set => Element.Element("ship")?.SetAttributeRemoveIfBlank("load", value);
         }
 
         public List<FTLChoice> Choices { get; } = new();
+
+        public FTLChoice AddNewChoice()
+        {
+            //todo format better
+            var choiceElement = Element.AppendNew("choice");
+            choiceElement.AppendNew("text", "placeholder");
+            var choiceEventElement = choiceElement.AppendNew("event");
+            var ftlChoice = new FTLChoice(Choices.Count, NewEvent(choiceEventElement, ModFile, new List<FTLChoice>()), choiceElement, ModFile);
+            Choices.Add(ftlChoice);
+            return ftlChoice;
+        }
+
         public virtual bool IsUnknownRef => false;
+
         public virtual bool IsRef => false;
     }
 

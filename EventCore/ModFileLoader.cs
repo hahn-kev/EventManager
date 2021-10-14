@@ -71,42 +71,15 @@ namespace EventCore
 
         private FTLEvent EventElementToModel(IElement element)
         {
-            FTLEvent Inner()
-            {
-                if (IsEventRef(element, out var name)) return new FTLEventRef(element, name, ModFile);
-                // if (element) return FTLEvent.Nothing;
-
-                var xAttribute = element.GetAttribute("name");
-                var ftlChoices = element.Children.Where(e => e.TagName == "choice").Select(ChoiceElementToModel)
-                    .ToList();
-                return new FTLEvent(element, xAttribute, ftlChoices, ModFile);
-            }
-
-            var ftlEvent = Inner();
+            var ftlChoices = FTLEvent.IsEventRef(element, out _)
+                ? new List<FTLChoice>()
+                : element.Children.Where(e => e.TagName == "choice").Select(ChoiceElementToModel)
+                .ToList();
+            var ftlEvent = FTLEvent.NewEvent(element, ModFile, ftlChoices);
 
             if (ftlEvent.Name is not null) Events[ftlEvent.Name] = ftlEvent;
             if (ftlEvent is FTLEventRef @ref) EventRefs.Add(@ref);
             return ftlEvent;
-        }
-
-        private bool IsEventRef(IElement element, [NotNullWhen(true)] out string? name)
-        {
-            var loadAttr = element.GetAttribute("load");
-            if (loadAttr is not null)
-            {
-                name = loadAttr;
-                return true;
-            }
-
-            var loadEventElement = element.Element("loadEvent");
-            if (loadEventElement is not null)
-            {
-                name = loadEventElement.TextContent;
-                return true;
-            }
-
-            name = null;
-            return false;
         }
 
         private FTLChoice ChoiceElementToModel(IElement element, int index)
@@ -119,7 +92,7 @@ namespace EventCore
             }
 
             var ftlEvent = EventElementToModel(eventElement);
-            return new FTLChoice(index, ftlEvent, element);
+            return new FTLChoice(index, ftlEvent, element, ModFile);
         }
     }
 }

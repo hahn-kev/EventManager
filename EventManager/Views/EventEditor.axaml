@@ -64,8 +64,10 @@
                      AcceptsReturn="True"
                      TextWrapping="Wrap"/>
 
+            <!-- Rewards -->
             <Expander Header="Rewards"
-                      Margin="0 4">
+                      Margin="0 4"
+                      IsExpanded="{Binding Event.HasCrew, Mode=OneTime}">
                 <c:AutoGrid RowCount="4"
                             ColumnDefinitions="Auto * *"
                             Margin="4 8 8 0">
@@ -105,8 +107,10 @@
                 </c:AutoGrid>
             </Expander>
 
+            <!-- Quest -->
             <Expander Header="Quest"
-                      Margin="0 4">
+                      Margin="0 4"
+                      IsExpanded="{Binding HasQuest^, Mode=OneTime}">
                 <c:AutoGrid ColumnDefinitions="* *"
                             RowCount="9"
                             Margin="4 8 8 4">
@@ -155,8 +159,10 @@
                 </c:AutoGrid>
             </Expander>
 
+            <!-- Ship -->
             <Expander Header="Ship"
-                      Margin="0 4">
+                      Margin="0 4"
+                      IsExpanded="{Binding HasShip, Mode=OneTime}">
                 <c:AutoGrid RowCount="2"
                             ColumnDefinitions="* *"
                             Margin="4 8 8 4">
@@ -175,6 +181,7 @@
                              IsVisible="{Binding HasShip}"/>
                 </c:AutoGrid>
             </Expander>
+
             <!-- Event Ref -->
             <TextBox Text="{Binding EventRef.RefName}"
                      wpf:TextFieldAssist.Label="Load Event"
@@ -184,9 +191,11 @@
             <!-- ReSharper restore Xaml.MissingGridIndex -->
         </c:AutoGrid>
 
+        <!-- Xml -->
         <Expander Grid.Row="2"
                   Grid.Column="0"
                   Margin="0 4"
+                  IsExpanded="{Binding RefreshRawTextHack, Mode=OneWayToSource}"
                   Header="XML">
             <TextBox IsVisible="True"
                      Height="200"
@@ -206,9 +215,16 @@
                 Width="200"
                 IsVisible="{Binding HasChoices}"
                 BorderThickness="5">
-            <StackPanel>
+            <c:AutoGrid RowCount="3"
+                        RowHeight="Auto"
+                        ColumnDefinitions="Auto, *">
                 <TextBlock>Choices:</TextBlock>
-                <ListBox Items="{Binding Choices}"
+                <Button Command="{Binding NewChoice}"
+                        HorizontalAlignment="Right">
+                    <mat-icon:MaterialIcon Kind="Plus"/>
+                </Button>
+                <ListBox Grid.ColumnSpan="2"
+                         Items="{Binding Choices}"
                          Height="150"
                          SelectedItem="{Binding SelectedChoice}">
                     <ListBox.ItemTemplate>
@@ -216,17 +232,18 @@
                             <StackPanel Margin="0 5"
                                         Orientation="Horizontal">
                                 <TextBlock Padding="0 0 4 0"
-                                           Text="{Binding Index}"/>
+                                           Text="{Binding FtlChoice.Index}"/>
                                 <TextBlock Text="{Binding Text}"/>
                             </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
-                <Panel IsVisible="{Binding SelectedChoice, Converter={x:Static ObjectConverters.IsNotNull}}">
-                    <views:ChoiceEditorView DataContext="{Binding SelectedChoiceVm^}"/>
+                <Panel Grid.ColumnSpan="2"
+                       IsVisible="{Binding SelectedChoice, Converter={x:Static ObjectConverters.IsNotNull}}">
+                    <views:ChoiceEditorView DataContext="{Binding SelectedChoice}"/>
                 </Panel>
 
-            </StackPanel>
+            </c:AutoGrid>
         </Border>
     </Grid>
 </UserControl>

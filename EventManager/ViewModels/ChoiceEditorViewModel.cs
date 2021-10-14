@@ -1,4 +1,6 @@
-﻿using EventCore;
+﻿using System.Collections.Generic;
+using EventCore;
+using ReactiveUI;
 
 namespace EventManager.ViewModels
 {
@@ -31,7 +33,12 @@ namespace EventManager.ViewModels
         public string Text
         {
             get => FtlChoice.Text;
-            set => FtlChoice.Text = value;
+            set
+            {
+                this.RaisePropertyChanging();
+                FtlChoice.Text = value;
+                this.RaisePropertyChanged();
+            }
         }
 
         public string? EventName
@@ -40,13 +47,28 @@ namespace EventManager.ViewModels
             set => FtlChoice.Event.Name = value;
         }
 
+        public FTLEvent Event => FtlChoice.Event;
+
         public EventImpType[] EventTypes { get; } = new[] { EventImpType.Load, EventImpType.Inline };
+        public bool EnableEventTypeSwitching => FtlChoice.Event.IsRef;
         public EventImpType EventType
         {
             get => FtlChoice.Event.IsRef ? EventImpType.Load : EventImpType.Inline;
             set
             {
-                //todo
+                if (value == EventType) return;
+                if (value == EventImpType.Load)
+                {
+                    //switch to load
+                    FtlChoice.ConvertToLoadEvent();
+                    return;
+                }
+
+                if (value == EventImpType.Inline)
+                {
+                    //switch to inline, don't inline current event make new empty one
+                    FtlChoice.ConvertToInlineEvent();
+                }
             }
         }
 

@@ -31,8 +31,12 @@ namespace EventCore
             bool prependNew = false)
         {
             var child = element.Element(tagName);
-            if (child != null) child.TextContent = value ?? "";
-            else if (!autoCreate) return;
+            if (child != null)
+            {
+                child.TextContent = value ?? "";
+                return;
+            }
+            if (!autoCreate) return;
 
             if (prependNew) PrependNew(element, tagName, value);
             else AppendNew(element, tagName, value);
@@ -49,6 +53,13 @@ namespace EventCore
             {
                 element.RemoveChild(child);
             }
+        }
+
+        public static void RemoveChildElement(this IElement element, string tagName)
+        {
+            var child = element.Element(tagName);
+            if (child != null)
+                element.RemoveChild(child);
         }
 
         public static IElement AppendNew(this IElement element, string tagName, string? textContent = null)
@@ -76,12 +87,21 @@ namespace EventCore
             {
                 element.AppendChild(childElement);
             }
+
             return childElement;
         }
 
         public static void SetAttribute(this IElement element, string name, bool value)
         {
             element.SetAttribute(name, value ? "true" : "false");
+        }
+
+        public static void SetAttributeRemoveIfBlank(this IElement element, string name, string? value)
+        {
+            if (string.IsNullOrEmpty(value))
+                element.RemoveAttribute(name);
+            else
+                element.SetAttribute(name, value);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -12,7 +13,7 @@ namespace EventManager.ViewModels
     public class EventEditorTreeViewModel : ViewModelBase
     {
         public ObservableCollection<EventEditorViewModel> EditorViewModels { get; } = new();
-        private Subject<int> EventsCleared = new();
+        private readonly Subject<int> _eventsCleared = new();
 
         public void SetTopLevelEvent(FTLEvent ftlEvent)
         {
@@ -27,11 +28,13 @@ namespace EventManager.ViewModels
 
             editorViewModel.ObservableForProperty(model => model.SelectedChoice)
                 .Where(change => change.Value != null)
-                .TakeUntil(EventsCleared.Where(clearedDepth => clearedDepth < choiceDepth))
+                .TakeUntil(_eventsCleared.Where(clearedDepth => clearedDepth < choiceDepth))
                 .Subscribe(change => ChoiceChanged(change.Value!.Event, choiceDepth + 1));
             editorViewModel.Closed.Subscribe(_ =>
             {
                 RemoveEditorsTo(choiceDepth);
+                var lastEditor = EditorViewModels.LastOrDefault();
+                if (lastEditor != null) lastEditor.SelectedChoice = null;
             });
 
             EditorViewModels.Add(editorViewModel);
@@ -58,7 +61,7 @@ namespace EventManager.ViewModels
                 EditorViewModels.Clear();
             }
 
-            EventsCleared.OnNext(depth);
+            _eventsCleared.OnNext(depth);
         }
 
 

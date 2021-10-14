@@ -134,6 +134,20 @@ namespace Tests
         }
 
         [Fact]
+        public void ChangingFtlEventTextWorks()
+        {
+            var fileLoader = new ModFileLoader(TestFile);
+            fileLoader.Load();
+            var modFile = fileLoader.ModFile;
+            var ftlEvent = modFile.Events.Values.First();
+            var text = ftlEvent.Text += "_test";
+
+            var textElements = ftlEvent.Element.QuerySelectorAll("text").ToArray();
+            textElements.Length.ShouldBe(1);
+            textElements.First().TextContent.ShouldBe(text);
+        }
+
+        [Fact]
         public void NotChangingFtlEventKeepsTheModClean()
         {
             var fileLoader = new ModFileLoader(TestFile);

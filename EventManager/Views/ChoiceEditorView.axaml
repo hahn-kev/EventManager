@@ -22,6 +22,7 @@
 
             <TextBlock Text="Event"/>
             <ComboBox SelectedItem="{Binding EventType}"
+                      IsEnabled="{Binding EnableEventTypeSwitching}"
                       Items="{Binding EventTypes}"/>
             <TextBox Text="{Binding EventName}"
                      Watermark="event name"
