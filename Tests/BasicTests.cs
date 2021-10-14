@@ -200,6 +200,22 @@ namespace Tests
             storageCheck.Event.Name.ShouldBe("STORAGE_CHECK");
         }
 
+
+        [Fact]
+        public async Task SepcifcTest2()
+        {
+            var eventName = "MV_ASTEROID_EXPLORE";
+            var modRoot = await new ModLoader(TestData).Load();
+            modRoot.EventsLookup.ShouldContainKey(eventName);
+            var ftlEvent = modRoot.EventsLookup[eventName];
+
+            var ftlChoice = ftlEvent.Choices.First();
+            ftlChoice.Text.ShouldBe("Explore the asteroid field.");
+            ftlChoice.Event.IsRef.ShouldBeTrue();
+            var eventRef = (FTLEventRef)ftlChoice.Event;
+            eventRef.RefName.ShouldBe("MV_ASTEROID_EXPLORE_RESULTS");
+        }
+
         [Fact]
         public async Task HyperspaceEventsPresent()
         {

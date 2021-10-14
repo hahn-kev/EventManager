@@ -218,7 +218,7 @@ namespace EventCore
 
         public FTLChoice AddNewChoice()
         {
-            //todo format better
+            //todo format output xml better
             var choiceElement = Element.AppendNew("choice");
             choiceElement.AppendNew("text", "placeholder");
             var choiceEventElement = choiceElement.AppendNew("event");

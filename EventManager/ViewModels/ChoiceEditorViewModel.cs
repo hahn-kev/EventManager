@@ -56,6 +56,7 @@ namespace EventManager.ViewModels
             get => FtlChoice.Event.IsRef ? EventImpType.Load : EventImpType.Inline;
             set
             {
+                //todo this gets called when switching between selected choices
                 if (value == EventType) return;
                 if (value == EventImpType.Load)
                 {

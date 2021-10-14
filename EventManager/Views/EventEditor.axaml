@@ -240,7 +240,8 @@
                 </ListBox>
                 <Panel Grid.ColumnSpan="2"
                        IsVisible="{Binding SelectedChoice, Converter={x:Static ObjectConverters.IsNotNull}}">
-                    <views:ChoiceEditorView DataContext="{Binding SelectedChoice}"/>
+                    <ContentControl Content="{Binding SelectedChoice}"></ContentControl>
+                    <!-- <views:ChoiceEditorView DataContext="{Binding SelectedChoice}" /> -->
                 </Panel>
 
             </c:AutoGrid>
