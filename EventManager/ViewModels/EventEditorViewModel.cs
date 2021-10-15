@@ -11,6 +11,7 @@ using Avalonia.Metadata;
 using DynamicData;
 using DynamicData.Binding;
 using EventCore;
+using Material.Styles;
 using ReactiveUI;
 
 namespace EventManager.ViewModels
@@ -25,7 +26,12 @@ namespace EventManager.ViewModels
         {
             Event = @event;
             Choices = new(Event.Choices.Select(c => new ChoiceEditorViewModel(c)));
+            this.WhenValueChanged(model => model.SelectedChoice)
+                .Where(model => model != null)
+                .Subscribe(model => OpenEvent.OnNext(model!.Event));
         }
+
+        public Subject<FTLEvent> OpenEvent { get; } = new();
 
         public Subject<Unit> Closed { get; } = new();
 
@@ -36,6 +42,8 @@ namespace EventManager.ViewModels
         }
 
         private FTLEvent Event { get; }
+
+        public bool HasReward => Event.HasCrew || Event.HasReward || !string.IsNullOrEmpty(Event.WeaponReward);
 
         public string? Name
         {
@@ -61,10 +69,22 @@ namespace EventManager.ViewModels
             }
         }
 
-        public ObservableCollection<ChoiceEditorViewModel> Choices { get; }
-        public bool HasChoices => Choices.Count > 0;
         public bool IsEventRef => Event.IsRef;
         public FTLEventRef? EventRef => Event as FTLEventRef;
+
+        public void EditEventRef()
+        {
+            if (EventRef == null) return;
+            if (EventRef is { ActualEvent: { } } eventRef)
+                OpenEvent.OnNext(eventRef.ActualEvent);
+            else
+            {
+                SnackbarHost.Post($"Unknown Event Name: {EventRef.RefName}");
+            }
+        }
+
+        public ObservableCollection<ChoiceEditorViewModel> Choices { get; }
+        public bool HasChoices => Choices.Count > 0;
 
         private ChoiceEditorViewModel? _selectedChoice;
 

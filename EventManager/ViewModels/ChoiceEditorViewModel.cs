@@ -41,22 +41,15 @@ namespace EventManager.ViewModels
             }
         }
 
-        public string? EventName
-        {
-            get => FtlChoice.Event.Name;
-            set => FtlChoice.Event.Name = value;
-        }
-
         public FTLEvent Event => FtlChoice.Event;
 
         public EventImpType[] EventTypes { get; } = new[] { EventImpType.Load, EventImpType.Inline };
-        public bool EnableEventTypeSwitching => FtlChoice.Event.IsRef;
+        public bool EnableEventTypeSwitching => Event.IsRef;
         public EventImpType EventType
         {
-            get => FtlChoice.Event.IsRef ? EventImpType.Load : EventImpType.Inline;
+            get => Event.IsRef ? EventImpType.Load : EventImpType.Inline;
             set
             {
-                //todo this gets called when switching between selected choices
                 if (value == EventType) return;
                 if (value == EventImpType.Load)
                 {
@@ -72,8 +65,6 @@ namespace EventManager.ViewModels
                 }
             }
         }
-
-        public bool ShowEventNameEditor => FtlChoice.Event.IsRef;
 
         public string? Requirement
         {

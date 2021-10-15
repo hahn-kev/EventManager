@@ -24,9 +24,6 @@
             <ComboBox SelectedItem="{Binding EventType}"
                       IsEnabled="{Binding EnableEventTypeSwitching}"
                       Items="{Binding EventTypes}"/>
-            <TextBox Text="{Binding EventName}"
-                     Watermark="event name"
-                     IsVisible="{Binding ShowEventNameEditor}"/>
             <TextBlock>Requirement</TextBlock>
             <TextBox Text="{Binding Requirement}"/>
 

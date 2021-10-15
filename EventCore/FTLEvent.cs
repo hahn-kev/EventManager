@@ -61,7 +61,8 @@ namespace EventCore
             Element = xElement;
             if (QuestMode == QuestModeEnum.Define)
             {
-                QuestDefinition = new FTLQuestDefinition(Element.Element("quest") ?? throw new NullReferenceException("quest tag not found"));
+                QuestDefinition = new FTLQuestDefinition(Element.Element("quest") ??
+                                                         throw new NullReferenceException("quest tag not found"));
             }
         }
 
@@ -149,6 +150,22 @@ namespace EventCore
             set => Element.SetChildElementText("crewMember", value ?? "");
         }
 
+        public string? WeaponReward
+        {
+            get => Element.Element("weapon")?.GetAttribute("name");
+            set
+            {
+                if (string.IsNullOrEmpty(value))
+                {
+                    Element.RemoveChildElement("weapon");
+                    return;
+                }
+
+                var weaponElement = Element.Element("weapon") ?? Element.AppendNew("weapon");
+                weaponElement.SetAttribute("name", value);
+            }
+        }
+
         public enum QuestModeEnum
         {
             None,
@@ -222,7 +239,10 @@ namespace EventCore
             var choiceElement = Element.AppendNew("choice");
             choiceElement.AppendNew("text", "placeholder");
             var choiceEventElement = choiceElement.AppendNew("event");
-            var ftlChoice = new FTLChoice(Choices.Count, NewEvent(choiceEventElement, ModFile, new List<FTLChoice>()), choiceElement, ModFile);
+            var ftlChoice = new FTLChoice(Choices.Count,
+                NewEvent(choiceEventElement, ModFile, new List<FTLChoice>()),
+                choiceElement,
+                ModFile);
             Choices.Add(ftlChoice);
             return ftlChoice;
         }
@@ -273,6 +293,7 @@ namespace EventCore
 
         public void FindRef(Dictionary<string, FTLEvent> events)
         {
+
             FTLEvent? foundEvent;
             events.TryGetValue(_refName, out foundEvent);
             ActualEvent = foundEvent;

@@ -5,23 +5,33 @@
              xmlns:vm="using:EventManager.ViewModels"
              xmlns:views="clr-namespace:EventManager.Views"
              xmlns:styles="clr-namespace:Material.Styles;assembly=Material.Styles"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d"
+             d:DesignWidth="800"
+             d:DesignHeight="450"
              x:Class="EventManager.Views.EventEditorTree">
     <Design.DataContext>
-        <vm:EventEditorTreeViewModel />
+        <vm:EventEditorTreeViewModel/>
     </Design.DataContext>
 
-    <ScrollViewer Name="ScrollViewer" VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Visible">
-        <ItemsRepeater Layout="{Binding RepeaterLayout}"
-                       Items="{Binding EditorViewModels}">
-            <ItemsRepeater.ItemTemplate>
+    <ScrollViewer Name="ScrollViewer"
+                  VerticalScrollBarVisibility="Disabled"
+                  HorizontalScrollBarVisibility="Visible">
+        <ItemsControl Items="{Binding EditorViewModels}">
+
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+
+            <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <styles:Card Margin="10">
-                        <views:EventEditor Width="500" />
+                        <views:EventEditor Width="500"/>
                     </styles:Card>
                 </DataTemplate>
-            </ItemsRepeater.ItemTemplate>
-        </ItemsRepeater>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
     </ScrollViewer>
 
 </UserControl>

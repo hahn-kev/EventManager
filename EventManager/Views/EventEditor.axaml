@@ -47,6 +47,7 @@
                     RowCount="6"
                     RowHeight="Auto"
                     ChildMargin="5"
+                    Margin="4 0"
                     ChildVerticalAlignment="Center"
                     ColumnDefinitions="*">
             <!-- ReSharper disable Xaml.MissingGridIndex -->
@@ -67,8 +68,8 @@
             <!-- Rewards -->
             <Expander Header="Rewards"
                       Margin="0 4"
-                      IsExpanded="{Binding Event.HasCrew, Mode=OneTime}">
-                <c:AutoGrid RowCount="4"
+                      IsExpanded="{Binding HasReward, Mode=OneWay}">
+                <c:AutoGrid RowCount="5"
                             ColumnDefinitions="Auto * *"
                             Margin="4 8 8 0">
                     <CheckBox IsChecked="{Binding Event.HasCrew}">
@@ -82,6 +83,7 @@
                     <NumericUpDown Value="{Binding Event.CrewAmount}"
                                    IsEnabled="{Binding Event.HasCrew}"
                                    VerticalAlignment="Center"
+                                   Margin="0 0 4 0"
                                    ShowButtonSpinner="False"/>
                     <TextBox Text="{Binding Event.CrewName}"
                              Classes="Filled"
@@ -91,7 +93,8 @@
                              IsEnabled="{Binding Event.HasCrew}"/>
 
 
-                    <CheckBox IsChecked="{Binding Event.HasReward}">
+                    <CheckBox IsChecked="{Binding Event.HasReward}"
+                              Margin="0 0 4 0">
                         Reward
                     </CheckBox>
                     <TextBox Text="{Binding Event.RewardType}"
@@ -103,14 +106,18 @@
                              Watermark="Level"
                              IsEnabled="{Binding Event.HasReward}"/>
 
-
+                    <TextBox Grid.ColumnSpan="3"
+                             Text="{Binding Event.WeaponReward}"
+                             Classes="Filled"
+                             wpf:TextFieldAssist.Label="Weapon"
+                             UseFloatingWatermark="True"/>
                 </c:AutoGrid>
             </Expander>
 
             <!-- Quest -->
             <Expander Header="Quest"
                       Margin="0 4"
-                      IsExpanded="{Binding HasQuest^, Mode=OneTime}">
+                      IsExpanded="{Binding HasQuest^, Mode=OneWay}">
                 <c:AutoGrid ColumnDefinitions="* *"
                             RowCount="9"
                             Margin="4 8 8 4">
@@ -162,7 +169,7 @@
             <!-- Ship -->
             <Expander Header="Ship"
                       Margin="0 4"
-                      IsExpanded="{Binding HasShip, Mode=OneTime}">
+                      IsExpanded="{Binding HasShip, Mode=OneWay}">
                 <c:AutoGrid RowCount="2"
                             ColumnDefinitions="* *"
                             Margin="4 8 8 4">
@@ -183,18 +190,26 @@
             </Expander>
 
             <!-- Event Ref -->
-            <TextBox Text="{Binding EventRef.RefName}"
-                     wpf:TextFieldAssist.Label="Load Event"
-                     UseFloatingWatermark="True"
-                     Classes="Filled"
-                     IsVisible="{Binding IsEventRef}"/>
+            <c:AutoGrid ColumnDefinitions="* Auto"
+                        RowHeight="Auto"
+                        RowCount="2"
+                        Margin="0 4"
+                        IsVisible="{Binding IsEventRef}">
+                <TextBox Text="{Binding EventRef.RefName}"
+                         wpf:TextFieldAssist.Label="Load Event"
+                         UseFloatingWatermark="True"
+                         Classes="Filled"
+                         Margin="0 0 4 0"/>
+                <Button VerticalAlignment="Center" Command="{Binding EditEventRef}">Edit Event</Button>
+            </c:AutoGrid>
+
             <!-- ReSharper restore Xaml.MissingGridIndex -->
         </c:AutoGrid>
 
         <!-- Xml -->
         <Expander Grid.Row="2"
                   Grid.Column="0"
-                  Margin="0 4"
+                  Margin="4"
                   IsExpanded="{Binding RefreshRawTextHack, Mode=OneWayToSource}"
                   Header="XML">
             <TextBox IsVisible="True"
@@ -240,7 +255,7 @@
                 </ListBox>
                 <Panel Grid.ColumnSpan="2"
                        IsVisible="{Binding SelectedChoice, Converter={x:Static ObjectConverters.IsNotNull}}">
-                    <ContentControl Content="{Binding SelectedChoice}"></ContentControl>
+                    <ContentControl Content="{Binding SelectedChoice}"/>
                     <!-- <views:ChoiceEditorView DataContext="{Binding SelectedChoice}" /> -->
                 </Panel>
 

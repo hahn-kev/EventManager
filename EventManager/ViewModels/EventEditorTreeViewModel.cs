@@ -26,10 +26,9 @@ namespace EventManager.ViewModels
             var choiceDepth = EditorViewModels.Count;
             var editorViewModel = new EventEditorViewModel(ftlEvent);
 
-            editorViewModel.ObservableForProperty(model => model.SelectedChoice)
-                .Where(change => change.Value != null)
+            editorViewModel.OpenEvent
                 .TakeUntil(_eventsCleared.Where(clearedDepth => clearedDepth < choiceDepth))
-                .Subscribe(change => ChoiceChanged(change.Value!.Event, choiceDepth + 1));
+                .Subscribe(newOpenedEvent => OpenEvent(newOpenedEvent, choiceDepth + 1));
             editorViewModel.Closed.Subscribe(_ =>
             {
                 RemoveEditorsTo(choiceDepth);
@@ -39,11 +38,11 @@ namespace EventManager.ViewModels
 
             EditorViewModels.Add(editorViewModel);
 
-            if (ftlEvent is FTLEventRef { ActualEvent: { } } eventRef)
-                AddNewEventOnEnd(eventRef.ActualEvent);
+            // if (ftlEvent is FTLEventRef { ActualEvent: { } } eventRef)
+            //     AddNewEventOnEnd(eventRef.ActualEvent);
         }
 
-        public void ChoiceChanged(FTLEvent ftlEvent, int depth)
+        public void OpenEvent(FTLEvent ftlEvent, int depth)
         {
             RemoveEditorsTo(depth);
             AddNewEventOnEnd(ftlEvent);
@@ -63,11 +62,5 @@ namespace EventManager.ViewModels
 
             _eventsCleared.OnNext(depth);
         }
-
-
-        public AttachedLayout RepeaterLayout { get; } = new StackLayout
-        {
-            Orientation = Orientation.Horizontal
-        };
     }
 }
