@@ -10,6 +10,7 @@
         d:DesignHeight="450"
         x:Class="EventManager.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
+        Name="MainWindow"
         Title="EventManager">
 
     <Design.DataContext>
@@ -20,15 +21,30 @@
               ColumnDefinitions="Auto,*"
               Margin="8 0 0 8">
             <StackPanel Orientation="Horizontal"
+                        Grid.ColumnSpan="2"
                         Margin="0">
 
                 <Button Margin="4"
-                        Command="{Binding Load}">
+                        Command="{Binding Load}"
+                        CommandParameter="{Binding #MainWindow}">
                     Load
                 </Button>
                 <Button Margin="4"
                         Command="{Binding Save}">
                     Save
+                </Button>
+
+                <ComboBox Items="{Binding ModRoot.ModFiles.Values}"
+                          MinWidth="100"
+                          SelectedItem="{Binding SelectedModFile}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding FileName}"/>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                <Button Command="{Binding AddEvent}" Margin="4">
+                    Add Event
                 </Button>
             </StackPanel>
             <views:EventsList Grid.Row="1"

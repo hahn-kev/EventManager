@@ -16,7 +16,7 @@
             <TextBox DockPanel.Dock="Top"
                      Watermark="Filter"
                      Margin="8 8 8 0"
-                     Text="{Binding Filter ,Mode=TwoWay}"/>
+                     Text="{Binding Filter}"/>
 
             <ListBox Items="{Binding Events^}"
                      SelectedItem="{Binding SelectedEvent}">

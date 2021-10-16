@@ -84,11 +84,17 @@ namespace EventCore
             get => _name;
             set
             {
+                var oldName = _name;
                 _name = value;
-                if (value != null)
-                    Element.SetAttribute("name", value);
-                else
+                if (string.IsNullOrEmpty(value))
+                {
                     Element.RemoveAttribute("name");
+                }
+                else
+                {
+                    Element.SetAttribute("name", value);
+                }
+                ModFile.EventNameUpdated(oldName, value, this);
             }
         }
 
@@ -293,7 +299,6 @@ namespace EventCore
 
         public void FindRef(Dictionary<string, FTLEvent> events)
         {
-
             FTLEvent? foundEvent;
             events.TryGetValue(_refName, out foundEvent);
             ActualEvent = foundEvent;

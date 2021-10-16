@@ -16,7 +16,7 @@ namespace EventManager.ViewModels
         {
             ObserveSelectedEvent = this.WhenValueChanged(model => model.SelectedEvent)
                 .Where(@event => @event != null)!.OfType<FTLEvent>();
-            var filterRx = this.WhenPropertyChanged(vm => vm.Filter).Select(value => value.Value);
+            var filterRx = this.WhenValueChanged(vm => vm.Filter);
             Events = Root.CombineLatest(filterRx)
                 .Select(t =>
                 {
@@ -28,13 +28,13 @@ namespace EventManager.ViewModels
                 });
             //first returns false until an event get's selected
             HasSelectedEvent = Observable.Return(false)
-                .Concat(ObserveSelectedEvent.FirstAsync().Select(_ => true));
+                .Concat(this.WhenValueChanged(model => model.SelectedEvent).Select(ftlEvent => ftlEvent != null));
         }
 
         public BehaviorSubject<ModRoot?> Root { get; } = new(null);
-        private string _filter;
+        private string? _filter;
 
-        public string Filter
+        public string? Filter
         {
             get => _filter;
             set => this.RaiseAndSetIfChanged(ref _filter, value);
