@@ -32,14 +32,20 @@ namespace EventManager
             };
         }
 
+        private string ModifyMessageTemplate(string template)
+        {
+            return template.Replace("{$", "{");
+        }
+
         public void Log(LogEventLevel level, string area, object source, string messageTemplate)
         {
-            _loggerFactory.CreateLogger(area).Log(ToLogLevel(level), messageTemplate);
+            _loggerFactory.CreateLogger(area).Log(ToLogLevel(level), ModifyMessageTemplate(messageTemplate));
         }
 
         public void Log<T0>(LogEventLevel level, string area, object source, string messageTemplate, T0 propertyValue0)
         {
-            _loggerFactory.CreateLogger(area).Log(ToLogLevel(level), messageTemplate, propertyValue0);
+            _loggerFactory.CreateLogger(area)
+                .Log(ToLogLevel(level), ModifyMessageTemplate(messageTemplate), propertyValue0);
         }
 
         public void Log<T0, T1>(LogEventLevel level,
@@ -49,7 +55,10 @@ namespace EventManager
             T0 propertyValue0,
             T1 propertyValue1)
         {
-            _loggerFactory.CreateLogger(area).Log(ToLogLevel(level), messageTemplate, propertyValue0, propertyValue1);
+            _loggerFactory.CreateLogger(area).Log(ToLogLevel(level),
+                ModifyMessageTemplate(messageTemplate),
+                propertyValue0,
+                propertyValue1);
         }
 
         public void Log<T0, T1, T2>(LogEventLevel level,
@@ -60,12 +69,21 @@ namespace EventManager
             T1 propertyValue1,
             T2 propertyValue2)
         {
-            _loggerFactory.CreateLogger(area).Log(ToLogLevel(level), messageTemplate, propertyValue0, propertyValue1, propertyValue2);
+            _loggerFactory.CreateLogger(area).Log(ToLogLevel(level),
+                ModifyMessageTemplate(messageTemplate),
+                propertyValue0,
+                propertyValue1,
+                propertyValue2);
         }
 
-        public void Log(LogEventLevel level, string area, object source, string messageTemplate, params object[] propertyValues)
+        public void Log(LogEventLevel level,
+            string area,
+            object source,
+            string messageTemplate,
+            params object[] propertyValues)
         {
-            _loggerFactory.CreateLogger(area).Log(ToLogLevel(level), messageTemplate, propertyValues);
+            _loggerFactory.CreateLogger(area)
+                .Log(ToLogLevel(level), ModifyMessageTemplate(messageTemplate), propertyValues);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Reactive;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -19,18 +20,19 @@ namespace EventManager
         public static void Main(string[] args)
         {
 
-            var loggerFactory = LoggerFactory.Create(builder =>
+            using var loggerFactory = LoggerFactory.Create(builder =>
             {
                 builder.AddFile("Logs/log-{Date}.txt", LogLevel.Error, new Dictionary<string, LogLevel>()
                 {
                     {"OpenGL", LogLevel.None}
                 });
-                // builder.AddFilter("OpenGL", level => false);
+                builder.AddDebug();
             });
             var logger = loggerFactory.CreateLogger("main");
             try
             {
                 Logger.Sink = new CustomLogSink(loggerFactory);
+                logger.LogInformation("application start");
                 BuildAvaloniaApp()
                     .StartWithClassicDesktopLifetime(args);
             }
