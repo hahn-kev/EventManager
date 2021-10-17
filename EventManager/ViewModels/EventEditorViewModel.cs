@@ -157,5 +157,7 @@ namespace EventManager.ViewModels
                 this.RaisePropertyChanged();
             }
         }
+
+        public bool HasBoarders => Event.BoarderClass != null;
     }
 }

@@ -33,7 +33,8 @@
                 Command="{Binding Close}">
             <mat-icon:MaterialIcon Kind="Close"/>
         </Button>
-        <StackPanel Grid.Column="0" Grid.Row="0"
+        <StackPanel Grid.Column="0"
+                    Grid.Row="0"
                     Orientation="Horizontal">
             <TextBlock VerticalAlignment="Center"
                        Padding="48 0 4 0">
@@ -44,7 +45,7 @@
         </StackPanel>
         <c:AutoGrid Grid.Row="1"
                     Grid.Column="0"
-                    RowCount="6"
+                    RowCount="7"
                     RowHeight="Auto"
                     ChildMargin="5"
                     Margin="4 0"
@@ -189,6 +190,35 @@
                 </c:AutoGrid>
             </Expander>
 
+            <!-- Boarders -->
+            <Expander Header="Boarders"
+                      Margin="0 4"
+                      IsExpanded="{Binding HasBoarders, Mode=OneWay}">
+                <c:AutoGrid RowCount="3"
+                            Margin="4 8 8 4"
+                            ColumnDefinitions="* *">
+                    <c:AutoGrid.Styles>
+                        <Style Selector="NumericUpDown /template/ TextBox#PART_TextBox">
+                            <Setter Property="UseFloatingWatermark"
+                                    Value="True"/>
+                        </Style>
+                    </c:AutoGrid.Styles>
+                    <TextBox Grid.ColumnSpan="2"
+                             Text="{Binding Event.BoarderClass}"
+                             wpf:TextFieldAssist.Label="Boarder Class"
+                             UseFloatingWatermark="True"
+                             Classes="Filled"/>
+                    <TextBlock>Min</TextBlock>
+                    <TextBlock>Max</TextBlock>
+                    <NumericUpDown Value="{Binding Event.BoarderMin}"
+                                   Margin="4"
+                                   ShowButtonSpinner="False"/>
+                    <NumericUpDown Value="{Binding Event.BoarderMax}"
+                                   Margin="4"
+                                   ShowButtonSpinner="False"/>
+                </c:AutoGrid>
+            </Expander>
+
             <!-- Event Ref -->
             <c:AutoGrid ColumnDefinitions="* Auto"
                         RowHeight="Auto"
@@ -200,7 +230,10 @@
                          UseFloatingWatermark="True"
                          Classes="Filled"
                          Margin="0 0 4 0"/>
-                <Button VerticalAlignment="Center" Command="{Binding EditEventRef}">Edit Event</Button>
+                <Button VerticalAlignment="Center"
+                        Command="{Binding EditEventRef}">
+                    Edit Event
+                </Button>
             </c:AutoGrid>
 
             <!-- ReSharper restore Xaml.MissingGridIndex -->

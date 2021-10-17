@@ -188,6 +188,18 @@ namespace EventCore
             }
         }
 
+        public int BoarderMin
+        {
+            get => int.Parse(Element.Element("boarders")?.GetAttribute("min") ?? "0");
+            set => Element.Element("boarders")?.SetAttribute("min", value.ToString());
+        }
+
+        public int BoarderMax
+        {
+            get => int.Parse(Element.Element("boarders")?.GetAttribute("max") ?? "0");
+            set => Element.Element("boarders")?.SetAttribute("max", value.ToString());
+        }
+
         public enum QuestModeEnum
         {
             None,
