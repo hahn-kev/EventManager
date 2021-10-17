@@ -24,7 +24,8 @@ namespace EventManager
             {
                 builder.AddFile("Logs/log-{Date}.txt", LogLevel.Error, new Dictionary<string, LogLevel>()
                 {
-                    {"OpenGL", LogLevel.None}
+                    {"OpenGL", LogLevel.None},
+                    {"Binding", LogLevel.None}
                 });
                 builder.AddDebug();
             });
