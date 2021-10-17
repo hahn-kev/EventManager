@@ -23,7 +23,7 @@
     </UserControl.Styles>
 
     <Grid ColumnDefinitions="*, Auto"
-          RowDefinitions="Auto, Auto, Auto">
+          RowDefinitions="Auto, Auto, *">
         <Button Grid.Row="0"
                 Grid.Column="0"
                 Padding="6"
