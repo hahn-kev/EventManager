@@ -33,7 +33,7 @@
                 Command="{Binding Close}">
             <mat-icon:MaterialIcon Kind="Close"/>
         </Button>
-        <StackPanel Grid.Row="0"
+        <StackPanel Grid.Column="0" Grid.Row="0"
                     Orientation="Horizontal">
             <TextBlock VerticalAlignment="Center"
                        Padding="48 0 4 0">
@@ -209,6 +209,7 @@
         <!-- Xml -->
         <Expander Grid.Row="2"
                   Grid.Column="0"
+                  VerticalAlignment="Top"
                   Margin="4"
                   IsExpanded="{Binding RefreshRawTextHack, Mode=OneWayToSource}"
                   Header="XML">

@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reactive;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Dialogs;
+using Avalonia.Logging;
 using Avalonia.ReactiveUI;
+using Microsoft.Extensions.Logging;
 using ReactiveUI;
 
 namespace EventManager
@@ -15,18 +18,25 @@ namespace EventManager
         // yet and stuff might break.
         public static void Main(string[] args)
         {
+
+            var loggerFactory = LoggerFactory.Create(builder =>
+            {
+                builder.AddFile("Logs/log-{Date}.txt", LogLevel.Error, new Dictionary<string, LogLevel>()
+                {
+                    {"OpenGL", LogLevel.None}
+                });
+                // builder.AddFilter("OpenGL", level => false);
+            });
+            var logger = loggerFactory.CreateLogger("main");
             try
             {
-                RxApp.DefaultExceptionHandler = Observer.Create<Exception>(exception =>
-                {
-                    Console.WriteLine(exception);
-                });
+                Logger.Sink = new CustomLogSink(loggerFactory);
                 BuildAvaloniaApp()
                     .StartWithClassicDesktopLifetime(args);
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                logger.LogError(e, "Main application error");
                 throw;
             }
         }
@@ -35,7 +45,6 @@ namespace EventManager
         public static AppBuilder BuildAvaloniaApp() =>
             AppBuilder.Configure<App>()
                 .UsePlatformDetect()
-                .LogToTrace()
                 .UseReactiveUI();
     }
 }

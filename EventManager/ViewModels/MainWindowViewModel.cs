@@ -43,12 +43,16 @@ namespace EventManager.ViewModels
 
         public async Task Load(Window window)
         {
-            string folderPath = null;
+            string? folderPath = null;
 #if DEBUG
             // folderPath = @"D:\Games\FTL Stuff\EventManager\Tests\TestData\data";
 #endif
             if (folderPath == null)
-                folderPath = await new OpenFolderDialog {Title = "Select the mod data folder"}.ShowAsync(window);
+            {
+                var folderDialog = new OpenFolderDialog { Title = "Select the mod data folder" };
+                folderPath = await folderDialog.ShowAsync(window);
+            }
+
             if (string.IsNullOrEmpty(folderPath)) return;
             var modLoader = new ModLoader(folderPath);
 
