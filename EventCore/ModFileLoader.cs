@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using AngleSharp.Dom;
+using AngleSharp.Html.Dom;
+using AngleSharp.Xml.Dom;
 using AngleSharp.Xml.Parser;
 
 namespace EventCore
@@ -31,14 +33,8 @@ namespace EventCore
             if (_loaded) return;
             _loaded = true;
 
-            var xmlParser = new XmlParser(new XmlParserOptions
-            {
-                IsSuppressingErrors = true
-            });
-            var fileText =  File.ReadAllText(_filePath);
 
-            var document = xmlParser.ParseDocument(fileText);
-
+            var document = ParseDocument(_filePath);
             ModFile.Document = document;
             var ftlEvents = ParseEvents(document.Children);
             foreach (var ftlEvent in ftlEvents)
@@ -48,7 +44,24 @@ namespace EventCore
             }
         }
 
+
+
+        private IXmlDocument ParseDocument(string filePath)
+        {
+            var xmlParser = new XmlParser(new XmlParserOptions
+            {
+                IsSuppressingErrors = true
+            });
+            var fileText = File.ReadAllText(filePath);
+
+            var document = xmlParser.ParseDocument(fileText);
+            if (document.DocumentElement.TagName == "FTL") return document;
+            document = xmlParser.ParseDocument($"<FTL>\r\n{fileText}\r\n</FTL>");
+            return document;
+        }
+
         private static readonly string[] eventParentTags = new[] { "FTL", "events" };
+
         private IEnumerable<FTLEvent> ParseEvents(IEnumerable<IElement> elements)
         {
             foreach (var xElement in elements)
@@ -60,7 +73,7 @@ namespace EventCore
                         yield return @event;
                     }
 
-                    yield break;
+                    continue;
                 }
 
                 if (xElement.TagName != "event") continue;
@@ -74,7 +87,7 @@ namespace EventCore
             var ftlChoices = FTLEvent.IsEventRef(element, out _)
                 ? new List<FTLChoice>()
                 : element.Children.Where(e => e.TagName == "choice").Select(ChoiceElementToModel)
-                .ToList();
+                    .ToList();
             var ftlEvent = FTLEvent.NewEvent(element, ModFile, ftlChoices);
 
             if (ftlEvent.Name is not null) Events[ftlEvent.Name] = ftlEvent;

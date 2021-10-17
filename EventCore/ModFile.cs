@@ -48,7 +48,12 @@ namespace EventCore
         {
             var firstEvent = Events.Values.FirstOrDefault();
             if (firstEvent == null) throw new NullReferenceException("no event found in mod file " + FileName);
-            var newEventElement = firstEvent.Element.ParentElement.AppendNew("event");
+
+            var elementParentElement = firstEvent.Element.ParentElement;
+            if (elementParentElement == null)
+                throw new NullReferenceException("unable to find parent element to add the new event element too");
+
+            var newEventElement = elementParentElement.AppendNew("event");
             var ftlEvent = new FTLEvent(newEventElement, "NEW_EVENT", new List<FTLChoice>(), this);
             ftlEvent.Name = ftlEvent.Name;
             // Events[ftlEvent.Name!] = ftlEvent;
