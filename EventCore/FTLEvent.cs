@@ -172,6 +172,22 @@ namespace EventCore
             }
         }
 
+        public string? BoarderClass
+        {
+            get => Element.Element("boarders")?.GetAttribute("class");
+            set
+            {
+                if (string.IsNullOrEmpty(value))
+                {
+                    Element.RemoveChildElement("boarders");
+                    return;
+                }
+
+                var boarderElement = Element.Element("boarders") ?? Element.AppendNew("boarders");
+                boarderElement.SetAttribute("class", value);
+            }
+        }
+
         public enum QuestModeEnum
         {
             None,
