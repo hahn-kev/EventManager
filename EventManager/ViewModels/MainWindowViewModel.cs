@@ -18,6 +18,8 @@ namespace EventManager.ViewModels
             EventsList.ObserveSelectedEvent.Subscribe(ftlEvent => EditorTreeViewModel.SetTopLevelEvent(ftlEvent));
         }
 
+        public string WindowTitle => "Event Manager " + AppVersion.Get();
+
         public EventsListViewModel EventsList { get; } = new();
         public EventEditorTreeViewModel EditorTreeViewModel { get; } = new();
 

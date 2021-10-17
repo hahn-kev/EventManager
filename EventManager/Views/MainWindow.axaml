@@ -11,7 +11,7 @@
         x:Class="EventManager.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
         Name="MainWindow"
-        Title="Event Manager 1.0">
+        Title="{Binding WindowTitle}">
 
     <Design.DataContext>
         <vm:MainWindowViewModel/>
