@@ -13,17 +13,21 @@ namespace EventManager.ViewModels
 {
     public class EventsListViewModel : ViewModelBase
     {
+        public EventsListViewModel(FTLEventList eventList): this()
+        {
+            EventsLoaded(eventList.FtlEvents);
+        }
+
         public EventsListViewModel()
         {
             ObserveSelectedEvent = this.WhenValueChanged(model => model.SelectedEvent)
                 .Where(@event => @event != null)!.OfType<FTLEvent>();
             var filterRx = this.WhenValueChanged(vm => vm.Filter);
-            Events = Root.CombineLatest(filterRx)
+            Events = _allEvents.CombineLatest(filterRx)
                 .Select(t =>
                 {
-                    var (modRoot, filter) = t;
-                    if (modRoot == null) return Array.Empty<FTLEvent>();
-                    return modRoot.TopLevelEvents.Where(e =>
+                    var (ftlEvents, filter) = t;
+                    return ftlEvents.Where(e =>
                         string.IsNullOrWhiteSpace(filter) ||
                         (e.Name?.StartsWith(filter, true, null) ?? false));
                 });
@@ -32,7 +36,12 @@ namespace EventManager.ViewModels
                 .Concat(this.WhenValueChanged(model => model.SelectedEvent).Select(ftlEvent => ftlEvent != null));
         }
 
-        public BehaviorSubject<ModRoot?> Root { get; } = new(null);
+        public void EventsLoaded(ICollection<FTLEvent> events)
+        {
+            _allEvents.OnNext(events);
+        }
+
+        private readonly BehaviorSubject<ICollection<FTLEvent>> _allEvents = new(Array.Empty<FTLEvent>());
         private string? _filter;
 
         public string? Filter
@@ -41,13 +50,27 @@ namespace EventManager.ViewModels
             set => this.RaiseAndSetIfChanged(ref _filter, value);
         }
 
-
         private FTLEvent? _selectedEvent;
 
         public FTLEvent? SelectedEvent
         {
             get => _selectedEvent;
             set => this.RaiseAndSetIfChanged(ref _selectedEvent, value);
+        }
+
+        private bool _showFilter = true;
+
+        public bool ShowFilter
+        {
+            get => _showFilter;
+            set => this.RaiseAndSetIfChanged(ref _showFilter, value);
+        }
+
+        private bool _showIndex = false;
+        public bool ShowIndex
+        {
+            get => _showIndex;
+            set => this.RaiseAndSetIfChanged(ref _showIndex, value);
         }
 
         public IObservable<bool> HasSelectedEvent { get; }

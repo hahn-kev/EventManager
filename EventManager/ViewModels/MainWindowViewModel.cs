@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Avalonia.Controls;
+using Avalonia.Logging;
 using EventCore;
 using Material.Styles;
 using ReactiveUI;
@@ -69,7 +71,7 @@ namespace EventManager.ViewModels
             }
 
             GC.Collect();
-            EventsList.Root.OnNext(ModRoot);
+            EventsList.EventsLoaded(ModRoot.TopLevelEvents.ToArray());
         }
 
         public async Task Save()

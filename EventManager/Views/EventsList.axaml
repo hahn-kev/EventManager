@@ -16,13 +16,17 @@
             <TextBox DockPanel.Dock="Top"
                      Watermark="Filter"
                      Margin="8 8 8 0"
-                     Text="{Binding Filter}"/>
+                     Text="{Binding Filter}"
+                     IsVisible="{Binding ShowFilter}"/>
 
             <ListBox Items="{Binding Events^}"
                      SelectedItem="{Binding SelectedEvent}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding Name}"/>
+                        <StackPanel Orientation="Horizontal">
+                            <!-- todo show something when there is no name -->
+                            <TextBlock Text="{Binding Name}"/>
+                        </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>

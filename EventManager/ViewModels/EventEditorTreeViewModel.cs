@@ -13,7 +13,7 @@ namespace EventManager.ViewModels
 {
     public class EventEditorTreeViewModel : ViewModelBase
     {
-        public ObservableCollection<EventEditorViewModel> EditorViewModels { get; } = new();
+        public ObservableCollection<ViewModelBase> EditorViewModels { get; } = new();
         private readonly Subject<int> _eventsCleared = new();
 
         public void SetTopLevelEvent(FTLEvent ftlEvent)
@@ -25,22 +25,45 @@ namespace EventManager.ViewModels
         private void AddNewEventOnEnd(FTLEvent ftlEvent)
         {
             var choiceDepth = EditorViewModels.Count;
-            var editorViewModel = new EventEditorViewModel(ftlEvent);
-
-            editorViewModel.OpenEvent
-                .TakeUntil(_eventsCleared.Where(clearedDepth => clearedDepth < choiceDepth))
-                .Subscribe(newOpenedEvent => OpenEvent(newOpenedEvent, choiceDepth + 1));
-            editorViewModel.Closed.Subscribe(_ =>
+            var shouldClose = _eventsCleared.Where(clearedDepth => clearedDepth < choiceDepth);
+            ViewModelBase viewModel;
+            switch (ftlEvent)
             {
-                RemoveEditorsTo(choiceDepth);
-                var lastEditor = EditorViewModels.LastOrDefault();
-                if (lastEditor != null) lastEditor.SelectedChoice = null;
-            });
+                case FTLEventList eventList:
+                    var eventsListViewModel = new EventsListViewModel(eventList)
+                    {
+                        ShowFilter = false
+                    };
+                    eventsListViewModel.ObserveSelectedEvent.TakeUntil(shouldClose)
+                        .Subscribe(newOpenedEvent => OpenEvent(newOpenedEvent, choiceDepth + 1));
+                    viewModel = eventsListViewModel;
+                    break;
+                default:
+                    var editorViewModel = new EventEditorViewModel(ftlEvent);
+                    viewModel = editorViewModel;
+                    editorViewModel.OpenEvent
+                        .TakeUntil(shouldClose)
+                        .Subscribe(newOpenedEvent => OpenEvent(newOpenedEvent, choiceDepth + 1));
 
-            EditorViewModels.Add(editorViewModel);
+                    editorViewModel.Closed.Subscribe(_ =>
+                    {
+                        EditorClosed(choiceDepth);
+                    });
+                    break;
+            }
+
+
+            EditorViewModels.Add(viewModel);
 
             // if (ftlEvent is FTLEventRef { ActualEvent: { } } eventRef)
             //     AddNewEventOnEnd(eventRef.ActualEvent);
+        }
+
+        private void EditorClosed(int choiceDepth)
+        {
+            RemoveEditorsTo(choiceDepth);
+            var lastEditor = EditorViewModels.LastOrDefault() as EventEditorViewModel;
+            if (lastEditor != null) lastEditor.SelectedChoice = null;
         }
 
         public void OpenEvent(FTLEvent ftlEvent, int depth)

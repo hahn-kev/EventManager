@@ -12,6 +12,14 @@
     <Design.DataContext>
         <vm:EventEditorTreeViewModel/>
     </Design.DataContext>
+    <UserControl.DataTemplates>
+        <DataTemplate DataType="vm:EventEditorViewModel">
+            <views:EventEditor Width="500"></views:EventEditor>
+        </DataTemplate>
+        <DataTemplate DataType="vm:EventsListViewModel">
+            <views:EventsList></views:EventsList>
+        </DataTemplate>
+    </UserControl.DataTemplates>
 
     <ScrollViewer Name="ScrollViewer"
                   VerticalScrollBarVisibility="Disabled"
@@ -27,7 +35,7 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <styles:Card Margin="10">
-                        <views:EventEditor Width="500"/>
+                        <ContentControl Content="{Binding .}"></ContentControl>
                     </styles:Card>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>

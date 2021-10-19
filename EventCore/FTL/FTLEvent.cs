@@ -81,7 +81,7 @@ namespace EventCore.FTL
 
         private string? _name;
 
-        public string? Name
+        public virtual string? Name
         {
             get => _name;
             set
@@ -324,6 +324,11 @@ namespace EventCore.FTL
         }
 
         // public override List<FTLChoice> Choices => ActualEvent?.Choices ?? base.Choices;
+        public override string? Name
+        {
+            get => RefName;
+            set => RefName = value ?? "";
+        }
 
         public string RefName
         {
@@ -353,6 +358,19 @@ namespace EventCore.FTL
             FTLEvent? foundEvent;
             events.TryGetValue(_refName, out foundEvent);
             ActualEvent = foundEvent;
+        }
+    }
+
+    public class FTLEventList : FTLEvent
+    {
+        public List<FTLEvent> FtlEvents { get; }
+
+        public FTLEventList(IElement xElement, List<FTLEvent> ftlEvents, ModFile modFile) : base(xElement,
+            xElement.GetAttribute("name"),
+            new(),
+            modFile)
+        {
+            FtlEvents = ftlEvents;
         }
     }
 }

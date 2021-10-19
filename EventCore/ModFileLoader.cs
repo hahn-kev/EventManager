@@ -73,6 +73,7 @@ namespace EventCore
                 ParseElements(xElement.Children);
                 return;
             }
+
             switch (xElement.TagName)
             {
                 case "event":
@@ -80,6 +81,9 @@ namespace EventCore
                     break;
                 case "text":
                     ParseText(xElement);
+                    break;
+                case "eventList":
+                    ParseEventList(xElement);
                     break;
             }
         }
@@ -90,12 +94,23 @@ namespace EventCore
             TextRefs[textRef.Name] = textRef;
         }
 
+        private void ParseEventList(IElement xElement)
+        {
+            if (!xElement.HasAttribute("name"))
+                return;
+            var events = xElement.Children.Where(e => e.TagName == "event").Select(EventElementToModel).ToList();
+
+            var eventList = new FTLEventList(xElement, events, ModFile);
+            var eventListName = eventList.Name;
+            if (eventListName == null)
+                throw new Exception("no name found for event list");
+
+            ModFile.Events[eventListName] = eventList;
+        }
+
         private void ParseEvent(IElement xElement)
         {
-            var ftlEvent = EventElementToModel(xElement);
-
-            if (ftlEvent.Name == null) return;
-            ModFile.Events[ftlEvent.Name] = ftlEvent;
+            EventElementToModel(xElement);
         }
 
         private FTLEvent EventElementToModel(IElement element)
@@ -118,11 +133,11 @@ namespace EventCore
 
             if (eventElement is null)
             {
-                throw new NotSupportedException();
+                throw new NotSupportedException("choice must have an event");
             }
 
             var ftlEvent = EventElementToModel(eventElement);
-            var choice= new FTLChoice(index, ftlEvent, element, ModFile);
+            var choice = new FTLChoice(index, ftlEvent, element, ModFile);
             AllCanRefTexts.Add(choice);
             return choice;
         }
