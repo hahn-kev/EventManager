@@ -33,6 +33,7 @@ namespace EventCore
             "dlcEvents.xml",
             "dlcEventsOverwrite.xml",
             "dlcEvents_anaerobic.xml",
+            "text_events.xml"
         };
 
         public ModLoader(string folderPath)
@@ -40,18 +41,12 @@ namespace EventCore
             _folderPath = folderPath;
         }
 
-        public async Task<ModRoot> Load()
+        public ModRoot Load()
         {
             EventRefs = new List<FTLEventRef>();
 
 
-            ModFileLoader[] modFileLoaders = ListEventFiles(out var hyperspaceLoader)
-                .Select(fileName => Path.Combine(_folderPath, fileName))
-                .Intersect(Directory.EnumerateFiles(_folderPath, "*.xml*"))
-                .Select(filePath => new ModFileLoader(filePath))
-                .Append(hyperspaceLoader)
-                .Where(loader => loader != null)
-                .ToArray()!;
+            ModFileLoader[] modFileLoaders = ListLoaders().ToArray()!;
 
             // Parallel.ForEach(modFileLoaders,loader => loader.Load());
             foreach (var modFileLoader in modFileLoaders)
@@ -60,15 +55,25 @@ namespace EventCore
             }
 
             // await Task.WhenAll(modFileLoaders.Select(mfl => mfl.Load()));
-            modFileLoaders = modFileLoaders.Where(file => file.Events.Count > 0).ToArray();
+            modFileLoaders = modFileLoaders.Where(file => file.Events.Count > 0 || file.TextRefs.Count > 0).ToArray();
 
             EventRefs.AddRange(modFileLoaders.SelectMany(loader => loader.EventRefs));
 
             var modRoot = new ModRoot(_folderPath,
                 modFileLoaders.Select(loader => loader.ModFile).ToArray());
 
-            LinkEventRefs(modRoot.EventsLookup);
+            LinkEventRefs(modRoot);
             return modRoot;
+        }
+
+        private IEnumerable<ModFileLoader> ListLoaders()
+        {
+            return ListEventFiles(out var hyperspaceLoader)
+                .Select(fileName => Path.Combine(_folderPath, fileName))
+                .Intersect(Directory.EnumerateFiles(_folderPath, "*.xml*"))
+                .Select(filePath => new ModFileLoader(filePath))
+                .Append(hyperspaceLoader)
+                .Where(loader => loader != null)!;
         }
 
         private IEnumerable<string> ListEventFiles(out ModFileLoader? hyperspaceLoader)
@@ -88,14 +93,19 @@ namespace EventCore
             return eventFiles.Select(e => $"events_{e.TextContent}.xml").Concat(allDefaultEventFiles);
         }
 
-        private void LinkEventRefs(Dictionary<string, FTLEvent> ftlEvents)
+        private void LinkEventRefs(ModRoot modRoot)
         {
             foreach (var ftlEventRef in EventRefs)
             {
                 if (ftlEventRef.IsUnknownRef)
                 {
-                    ftlEventRef.FindRef(ftlEvents);
+                    ftlEventRef.FindRef(modRoot.EventsLookup);
                 }
+            }
+
+            foreach (var ftlEvent in modRoot.ModFiles.Values.SelectMany(mf => mf.AllEvents))
+            {
+                ftlEvent.FindTextRef();
             }
         }
     }

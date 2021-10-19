@@ -15,6 +15,13 @@ namespace EventCore
             {
                 modFile.ModRoot = this;
             }
+
+            EventsLookup = ModFiles.Values.SelectMany(mf => mf.Events)
+                .ToLookup(pair => pair.Key, pair => pair.Value)
+                .ToDictionary(g => g.Key, g => g.Last());
+            TextRefs = ModFiles.Values.SelectMany(mf => mf.TextRefs)
+                .ToLookup(pair => pair.Key, pair => pair.Value)
+                .ToDictionary(g => g.Key, g => g.Last());
         }
 
         public string FolderPath { get; }
@@ -22,9 +29,7 @@ namespace EventCore
         public Dictionary<string, ModFile> ModFiles { get; }
         public IEnumerable<FTLEvent> TopLevelEvents => ModFiles.Values.SelectMany(mf => mf.Events.Values);
 
-        public Dictionary<string, FTLEvent> EventsLookup =>
-            ModFiles.Values.SelectMany(mf => mf.Events)
-                .ToLookup(pair => pair.Key, pair => pair.Value)
-                .ToDictionary(g => g.Key, g => g.Last());
+        public Dictionary<string, FTLEvent> EventsLookup { get; }
+        public Dictionary<string, FTLTextRef> TextRefs { get; }
     }
 }

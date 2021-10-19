@@ -18,6 +18,8 @@ namespace EventCore
         private string _filePath;
         public Dictionary<string, FTLEvent> Events => ModFile.Events;
         public List<FTLEventRef> EventRefs { get; } = new();
+        public List<FTLEvent> AllEvents => ModFile.AllEvents;
+        public Dictionary<string, FTLTextRef> TextRefs => ModFile.TextRefs;
         public ModFile ModFile { get; set; }
 
         private bool _loaded;
@@ -36,15 +38,8 @@ namespace EventCore
 
             var document = ParseDocument(_filePath);
             ModFile.Document = document;
-            var ftlEvents = ParseEvents(document.Children);
-            foreach (var ftlEvent in ftlEvents)
-            {
-                if (ftlEvent.Name == null) continue;
-                ModFile.Events[ftlEvent.Name] = ftlEvent;
-            }
+            ParseElements(document.Children);
         }
-
-
 
         private IXmlDocument ParseDocument(string filePath)
         {
@@ -62,24 +57,44 @@ namespace EventCore
 
         private static readonly string[] eventParentTags = new[] { "FTL", "events" };
 
-        private IEnumerable<FTLEvent> ParseEvents(IEnumerable<IElement> elements)
+        private void ParseElements(IEnumerable<IElement> elements)
         {
             foreach (var xElement in elements)
             {
-                if (eventParentTags.Contains(xElement.TagName, StringComparer.OrdinalIgnoreCase))
-                {
-                    foreach (var @event in ParseEvents(xElement.Children))
-                    {
-                        yield return @event;
-                    }
-
-                    continue;
-                }
-
-                if (xElement.TagName != "event") continue;
-                var ftlEvent = EventElementToModel(xElement);
-                yield return ftlEvent;
+                ParseElement(xElement);
             }
+        }
+
+        private void ParseElement(IElement xElement)
+        {
+            if (eventParentTags.Contains(xElement.TagName, StringComparer.OrdinalIgnoreCase))
+            {
+                ParseElements(xElement.Children);
+                return;
+            }
+            switch (xElement.TagName)
+            {
+                case "event":
+                    ParseEvent(xElement);
+                    break;
+                case "text":
+                    ParseText(xElement);
+                    break;
+            }
+        }
+
+        private void ParseText(IElement element)
+        {
+            var textRef = new FTLTextRef(element);
+            TextRefs[textRef.Name] = textRef;
+        }
+
+        private void ParseEvent(IElement xElement)
+        {
+            var ftlEvent = EventElementToModel(xElement);
+
+            if (ftlEvent.Name == null) return;
+            ModFile.Events[ftlEvent.Name] = ftlEvent;
         }
 
         private FTLEvent EventElementToModel(IElement element)
@@ -92,6 +107,7 @@ namespace EventCore
 
             if (ftlEvent.Name is not null) Events[ftlEvent.Name] = ftlEvent;
             if (ftlEvent is FTLEventRef @ref) EventRefs.Add(@ref);
+            else AllEvents.Add(ftlEvent);
             return ftlEvent;
         }
 

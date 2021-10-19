@@ -14,6 +14,8 @@ namespace EventCore
         public string FileName => Path.GetFileName(FilePath);
         public bool Dirty { get; private set; }
         public Dictionary<string, FTLEvent> Events { get; }
+        public Dictionary<string, FTLTextRef> TextRefs { get; } = new();
+        public List<FTLEvent> AllEvents { get; } = new();
 
         private IDocument? _document;
 
@@ -27,6 +29,12 @@ namespace EventCore
             }
         }
 
+        public ModFile(string filePath)
+        {
+            FilePath = filePath;
+            Events = new Dictionary<string, FTLEvent>();
+        }
+
         private void SetupDirtyWatch()
         {
             if (_document == null) return;
@@ -36,12 +44,6 @@ namespace EventCore
                 observer.Disconnect();
             });
             observer.Connect(_document.DocumentElement, true, true, true, true);
-        }
-
-        public ModFile(string filePath)
-        {
-            FilePath = filePath;
-            Events = new Dictionary<string, FTLEvent>();
         }
 
         public FTLEvent AddEvent()

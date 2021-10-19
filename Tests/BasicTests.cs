@@ -30,19 +30,19 @@ namespace Tests
         }
 
         [Fact]
-        public async Task CanLoadMod()
+        public void CanLoadMod()
         {
-            var modRoot = await new ModLoader(TestData).Load();
+            var modRoot = new ModLoader(TestData).Load();
             modRoot.ShouldNotBeNull();
         }
 
         [Fact]
-        public async Task MemoryUsage()
+        public void MemoryUsage()
         {
             var xmlElementType = typeof(XmlParser).Assembly.GetType("AngleSharp.Xml.Dom.XmlElement");
             xmlElementType.ShouldNotBeNull();
 
-            var modRoot = await new ModLoader(TestData).Load();
+            var modRoot = new ModLoader(TestData).Load();
 
             dotMemory.Check(memory =>
             {
@@ -55,9 +55,9 @@ namespace Tests
         }
 
         [Fact]
-        public async Task Testing()
+        public void Testing()
         {
-            var modRoot = await new ModLoader(TestData).Load();
+            var modRoot = new ModLoader(TestData).Load();
 
             var names = modRoot.TopLevelEvents
                 .SelectMany(ftlEvent => Events(ftlEvent))
@@ -100,7 +100,7 @@ namespace Tests
 
 
         [Fact]
-        public async Task CanLoadFile()
+        public void CanLoadFile()
         {
             var fileLoader = new ModFileLoader(TestFile);
             fileLoader.Load();
@@ -197,15 +197,15 @@ namespace Tests
             refuseChoice.Event.Text.ShouldStartWith("\"Ok. Thanks many");
 
             var storageCheck = refuseChoice.Event.Choices[0];
-            storageCheck.Event.Name.ShouldBe("STORAGE_CHECK");
+            storageCheck.Event.ShouldBeOfType<FTLEventRef>().RefName.ShouldBe("STORAGE_CHECK");
         }
 
 
         [Fact]
-        public async Task SepcifcTest2()
+        public void SepcifcTest2()
         {
             var eventName = "MV_ASTEROID_EXPLORE";
-            var modRoot = await new ModLoader(TestData).Load();
+            var modRoot = new ModLoader(TestData).Load();
             modRoot.EventsLookup.ShouldContainKey(eventName);
             var ftlEvent = modRoot.EventsLookup[eventName];
 
@@ -217,11 +217,26 @@ namespace Tests
         }
 
         [Fact]
-        public async Task HyperspaceEventsPresent()
+        public void HyperspaceEventsPresent()
         {
-            var modRoot = await new ModLoader(TestData).Load();
+            var modRoot = new ModLoader(TestData).Load();
             modRoot.EventsLookup.ShouldContainKey("SHOWDOWN_WIN");
             // var ftlEvent = modRoot.EventsLookup["SHOWDOWN_WIN"];
+        }
+
+        [Fact]
+        public void UsesTextRefProperly()
+        {
+            var eventName = "TRADELIST_RESOURCES_FUEL";
+            var modRoot = new ModLoader(TestData).Load();
+            modRoot.EventsLookup.ShouldContainKey(eventName);
+            var ftlEvent = modRoot.EventsLookup[eventName];
+            ftlEvent.IsTextRef.ShouldBeTrue();
+            ftlEvent.TextRefId.ShouldBe("trade_purchase");
+            ftlEvent.Text.ShouldStartWith("With your new");
+            ftlEvent.Text = "text";
+            ftlEvent.TextRef.Text.ShouldBe("text");
+
         }
     }
 }

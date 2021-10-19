@@ -66,7 +66,8 @@ namespace EventCore
                                                          throw new NullReferenceException("quest tag not found"));
             }
 
-            Damages = Element.Children.Where(child => child.TagName == "damage").Select(child => new FTLDamage(child)).ToList();
+            Damages = Element.Children.Where(child => child.TagName == "damage").Select(child => new FTLDamage(child))
+                .ToList();
         }
 
         public FTLEvent(IElement xElement, string? name, List<FTLChoice> choices, ModFile modFile) : this(xElement,
@@ -97,15 +98,34 @@ namespace EventCore
                 {
                     Element.SetAttribute("name", value);
                 }
+
                 ModFile.EventNameUpdated(oldName, value, this);
             }
         }
 
         public string? Text
         {
-            get => Element.Element("text")?.TextContent;
-            set => Element.SetChildElementText("text", value ?? "", true, true);
+            get
+            {
+                if (IsUnknownTextRef) return $"[Unknown id='{TextRefId}' ]";
+                return TextRef?.Text ?? Element.Element("text")?.TextContent;
+            }
+            set
+            {
+                if (TextRef != null)
+                {
+                    TextRef.Text = value ?? "";
+                    return;
+                }
+
+                Element.SetChildElementText("text", value ?? "", true, true);
+            }
         }
+
+        public FTLTextRef? TextRef { get; private set; }
+        public bool IsTextRef => Element.Element("text")?.HasAttribute("id") ?? false;
+        public string? TextRefId => Element.Element("text")?.GetAttribute("id");
+        public bool IsUnknownTextRef => IsTextRef && TextRef == null;
 
         public bool Unique
         {
@@ -305,6 +325,21 @@ namespace EventCore
             Element.RemoveChild(ftlDamage.Element);
             Damages.Remove(ftlDamage);
         }
+
+        public void FindTextRef()
+        {
+            var textRefId = TextRefId;
+            if (!IsTextRef) return;
+            if (textRefId == null) throw new Exception("text ref id unknown");
+            var textRefs = ModFile.ModRoot?.TextRefs ?? ModFile.TextRefs;
+            if (!textRefs.TryGetValue(textRefId, out var ftlTextRef))
+            {
+                // throw new Exception($"unable to find text id '{textRefId}'");
+                return;
+            }
+
+            TextRef = ftlTextRef;
+        }
     }
 
     public class FTLEventRef : FTLEvent
@@ -346,7 +381,7 @@ namespace EventCore
 
         public override bool IsRef => true;
 
-        public void FindRef(Dictionary<string, FTLEvent> events)
+        public void FindRef(IReadOnlyDictionary<string, FTLEvent> events)
         {
             FTLEvent? foundEvent;
             events.TryGetValue(_refName, out foundEvent);

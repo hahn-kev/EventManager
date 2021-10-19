@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using EventCore;
+using Material.Styles;
 using ReactiveUI;
 
 namespace EventManager.ViewModels
@@ -57,8 +58,16 @@ namespace EventManager.ViewModels
 
             if (string.IsNullOrEmpty(folderPath)) return;
             var modLoader = new ModLoader(folderPath);
+            try
+            {
+                ModRoot = modLoader.Load();
+            }
+            catch (Exception e)
+            {
+                SnackbarHost.Post("Error: " + e.Message);
+                return;
+            }
 
-            ModRoot = await modLoader.Load();
             GC.Collect();
             EventsList.Root.OnNext(ModRoot);
         }

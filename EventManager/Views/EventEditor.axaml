@@ -65,6 +65,7 @@
                          UseFloatingWatermark="True"
                          MaxHeight="100"
                          Text="{Binding Text}"
+                         IsEnabled="{Binding !Event.IsUnknownTextRef}"
                          AcceptsReturn="True"
                          TextWrapping="Wrap"/>
 
