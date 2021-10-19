@@ -4,7 +4,7 @@ using AngleSharp.Dom;
 
 namespace EventCore.FTL
 {
-    public class FTLChoice
+    public class FTLChoice: ICanHaveTextRef
     {
         private static readonly string[] ValidAttributes = new[] {
             "hidden", "req", "lvl", "blue", "max_group", "max_lvl", "min_level"
@@ -13,13 +13,9 @@ namespace EventCore.FTL
             "text", "event", "store", "choice"
         };
 
-        private IElement _textElement;
-
         public FTLChoice(int index, FTLEvent @event, IElement element, ModFile modFile)
         {
             Index = index + 1;
-            _textElement = element.Element("text") ?? throw new NotSupportedException("choice must have text");
-
             Event = @event;
             Element = element;
             ModFile = modFile;
@@ -41,11 +37,13 @@ namespace EventCore.FTL
         }
 
         public int Index { get; }
-        public string Text
+        public string? Text
         {
-            get => _textElement.TextContent;
-            set => _textElement.TextContent = value;
+            get => ((ICanHaveTextRef)this).TextImp;
+            set => ((ICanHaveTextRef)this).TextImp = value;
         }
+
+        FTLTextRef? ICanHaveTextRef.TextRef { get; set; }
 
         public FTLEvent Event { get; set; }
         public string? Requirement

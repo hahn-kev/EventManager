@@ -232,11 +232,12 @@ namespace Tests
             var modRoot = new ModLoader(TestData).Load();
             modRoot.EventsLookup.ShouldContainKey(eventName);
             var ftlEvent = modRoot.EventsLookup[eventName];
-            ftlEvent.IsTextRef.ShouldBeTrue();
-            ftlEvent.TextRefId.ShouldBe("trade_purchase");
+            var canTextRef = ftlEvent as ICanHaveTextRef;
+            canTextRef.IsTextRef.ShouldBeTrue();
+            canTextRef.TextRefId.ShouldBe("trade_purchase");
             ftlEvent.Text.ShouldStartWith("With your new");
             ftlEvent.Text = "text";
-            ftlEvent.TextRef.Text.ShouldBe("text");
+            canTextRef.TextRef.Text.ShouldBe("text");
 
         }
     }

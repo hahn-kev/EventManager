@@ -6,7 +6,7 @@ using AngleSharp.Dom;
 
 namespace EventCore.FTL
 {
-    public class FTLEvent
+    public class FTLEvent : ICanHaveTextRef
     {
         //possible valid attributes
         private static readonly string[] ValidAttributes = new[] { "name", "hidden", "unique" };
@@ -75,9 +75,9 @@ namespace EventCore.FTL
             Choices = choices;
         }
 
-        public IElement Element { get; init; }
+        public IElement Element { get; }
 
-        public ModFile ModFile { get; set; }
+        public ModFile ModFile { get; }
 
         private string? _name;
 
@@ -103,27 +103,12 @@ namespace EventCore.FTL
 
         public string? Text
         {
-            get
-            {
-                if (IsUnknownTextRef) return $"[Unknown id='{TextRefId}' ]";
-                return TextRef?.Text ?? Element.Element("text")?.TextContent;
-            }
-            set
-            {
-                if (TextRef != null)
-                {
-                    TextRef.Text = value ?? "";
-                    return;
-                }
-
-                Element.SetChildElementText("text", value ?? "", true, true);
-            }
+            get => ((ICanHaveTextRef)this).TextImp;
+            set => ((ICanHaveTextRef)this).TextImp = value;
         }
 
-        public FTLTextRef? TextRef { get; private set; }
-        public bool IsTextRef => Element.Element("text")?.HasAttribute("id") ?? false;
-        public string? TextRefId => Element.Element("text")?.GetAttribute("id");
-        public bool IsUnknownTextRef => IsTextRef && TextRef == null;
+        FTLTextRef? ICanHaveTextRef.TextRef { get; set; }
+
 
         public bool Unique
         {
@@ -323,21 +308,6 @@ namespace EventCore.FTL
             Element.RemoveChild(ftlDamage.Element);
             Damages.Remove(ftlDamage);
         }
-
-        public void FindTextRef()
-        {
-            var textRefId = TextRefId;
-            if (!IsTextRef) return;
-            if (textRefId == null) throw new Exception("text ref id unknown");
-            var textRefs = ModFile.ModRoot?.TextRefs ?? ModFile.TextRefs;
-            if (!textRefs.TryGetValue(textRefId, out var ftlTextRef))
-            {
-                // throw new Exception($"unable to find text id '{textRefId}'");
-                return;
-            }
-
-            TextRef = ftlTextRef;
-        }
     }
 
     public class FTLEventRef : FTLEvent
@@ -350,7 +320,6 @@ namespace EventCore.FTL
             new(),
             modFile)
         {
-            Element = xElement;
             _refName = refName;
         }
 

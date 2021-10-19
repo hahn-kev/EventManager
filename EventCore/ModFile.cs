@@ -16,7 +16,7 @@ namespace EventCore
         public bool Dirty { get; private set; }
         public Dictionary<string, FTLEvent> Events { get; }
         public Dictionary<string, FTLTextRef> TextRefs { get; } = new();
-        public List<FTLEvent> AllEvents { get; } = new();
+        public List<ICanHaveTextRef> AllCanRefTexts { get; } = new();
 
         private IDocument? _document;
 

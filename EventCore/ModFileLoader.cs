@@ -19,7 +19,7 @@ namespace EventCore
         private string _filePath;
         public Dictionary<string, FTLEvent> Events => ModFile.Events;
         public List<FTLEventRef> EventRefs { get; } = new();
-        public List<FTLEvent> AllEvents => ModFile.AllEvents;
+        public List<ICanHaveTextRef> AllCanRefTexts => ModFile.AllCanRefTexts;
         public Dictionary<string, FTLTextRef> TextRefs => ModFile.TextRefs;
         public ModFile ModFile { get; set; }
 
@@ -108,7 +108,7 @@ namespace EventCore
 
             if (ftlEvent.Name is not null) Events[ftlEvent.Name] = ftlEvent;
             if (ftlEvent is FTLEventRef @ref) EventRefs.Add(@ref);
-            else AllEvents.Add(ftlEvent);
+            else AllCanRefTexts.Add(ftlEvent);
             return ftlEvent;
         }
 
@@ -122,7 +122,9 @@ namespace EventCore
             }
 
             var ftlEvent = EventElementToModel(eventElement);
-            return new FTLChoice(index, ftlEvent, element, ModFile);
+            var choice= new FTLChoice(index, ftlEvent, element, ModFile);
+            AllCanRefTexts.Add(choice);
+            return choice;
         }
     }
 }

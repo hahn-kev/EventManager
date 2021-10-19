@@ -104,7 +104,7 @@ namespace EventCore
                 }
             }
 
-            foreach (var ftlEvent in modRoot.ModFiles.Values.SelectMany(mf => mf.AllEvents))
+            foreach (var ftlEvent in modRoot.ModFiles.Values.SelectMany(mf => mf.AllCanRefTexts))
             {
                 ftlEvent.FindTextRef();
             }
