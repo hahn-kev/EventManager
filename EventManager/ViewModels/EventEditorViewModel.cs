@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using AngleSharp;
 using Avalonia.Input;
 using Avalonia.Metadata;
 using DynamicData;
@@ -26,6 +27,7 @@ namespace EventManager.ViewModels
         {
             Event = @event;
             Choices = new(Event.Choices.Select(c => new ChoiceEditorViewModel(c)));
+            Damages = new(Event.Damages);
             this.WhenValueChanged(model => model.SelectedChoice)
                 .Where(model => model != null)
                 .Subscribe(model => OpenEvent.OnNext(model!.Event));
@@ -100,9 +102,25 @@ namespace EventManager.ViewModels
             Choices.Add(new ChoiceEditorViewModel(newChoice));
         }
 
+        public ObservableCollection<FTLDamage> Damages { get; }
+
+        public bool HasDamages => Damages.Count > 0;
+
+        public void NewDamage()
+        {
+            var newDamage = Event.AddNewDamage();
+            Damages.Add(newDamage);
+        }
+
+        public void RemoveDamage(FTLDamage ftlDamage)
+        {
+            Event.RemoveDamage(ftlDamage);
+            Damages.Remove(ftlDamage);
+        }
+
         public IObservable<string?> RawText =>
             Observable.Return(this).Concat(this.WhenAnyPropertyChanged())
-                .Select(model => model?.Event.Element.OuterHtml);
+                .Select(model => model?.Event.Element.ToHtml(FtlXmlMarkupFormatter.Instance));
 
         public bool RefreshRawTextHack
         {
@@ -159,5 +177,6 @@ namespace EventManager.ViewModels
         }
 
         public bool HasBoarders => Event.BoarderClass != null;
+
     }
 }

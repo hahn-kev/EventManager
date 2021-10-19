@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
+using AngleSharp;
 using AngleSharp.Dom;
+using AngleSharp.Html.Dom;
 
 namespace EventCore
 {
@@ -71,7 +73,13 @@ namespace EventCore
 
         private static IElement NewElement(IElement element, string tagName, string? textContent)
         {
-            var childElement = element.Owner!.CreateElement(tagName);
+            var document = element.Owner as Document;
+            if (document == null)
+                throw new NullReferenceException("element owner is null");
+            // var elementFactory = document.Context.GetFactory<IElementFactory<Document, HtmlElement>>();
+            var flags = textContent == null ? NodeFlags.SelfClosing : NodeFlags.None;
+
+            var childElement = document.CreateElementFrom(tagName, null!, flags);
             if (textContent != null) childElement.TextContent = textContent;
             return childElement;
         }

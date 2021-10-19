@@ -23,7 +23,7 @@
     </UserControl.Styles>
 
     <Grid ColumnDefinitions="*, Auto"
-          RowDefinitions="Auto, Auto, *">
+          RowDefinitions="Auto, *">
         <Button Grid.Row="0"
                 Grid.Column="0"
                 Padding="6"
@@ -43,224 +43,261 @@
             <TextBlock VerticalAlignment="Center"
                        Text="{Binding FileName}"/>
         </StackPanel>
-        <c:AutoGrid Grid.Row="1"
-                    Grid.Column="0"
-                    RowCount="7"
-                    RowHeight="Auto"
-                    ChildMargin="5"
-                    Margin="4 0"
-                    ChildVerticalAlignment="Center"
-                    ColumnDefinitions="*">
-            <!-- ReSharper disable Xaml.MissingGridIndex -->
+        <ScrollViewer Grid.Row="1"
+                      Grid.Column="0"
+                      Padding="0 0 10 0">
 
-            <TextBox Classes="Filled"
-                     wpf:TextFieldAssist.Label="Name"
-                     UseFloatingWatermark="True"
-                     Text="{Binding Name}"/>
-
-            <TextBox Classes="Filled"
-                     wpf:TextFieldAssist.Label="Text"
-                     UseFloatingWatermark="True"
-                     MaxHeight="100"
-                     Text="{Binding Text}"
-                     AcceptsReturn="True"
-                     TextWrapping="Wrap"/>
-
-            <!-- Rewards -->
-            <Expander Header="Rewards"
-                      Margin="0 4"
-                      IsExpanded="{Binding HasReward, Mode=OneWay}">
-                <c:AutoGrid RowCount="5"
-                            ColumnDefinitions="Auto * *"
-                            Margin="4 8 8 0">
-                    <CheckBox IsChecked="{Binding Event.HasCrew}">
-                        Crew
-                    </CheckBox>
-                    <TextBox Text="{Binding Event.CrewClass}"
-                             Classes="Filled"
-                             Watermark="Class"
-                             Grid.ColumnSpan="2"
-                             IsEnabled="{Binding Event.HasCrew}"/>
-                    <NumericUpDown Value="{Binding Event.CrewAmount}"
-                                   IsEnabled="{Binding Event.HasCrew}"
-                                   VerticalAlignment="Center"
-                                   Margin="0 0 4 0"
-                                   ShowButtonSpinner="False"/>
-                    <TextBox Text="{Binding Event.CrewName}"
-                             Classes="Filled"
-                             wpf:TextFieldAssist.Label="Crew Name"
-                             UseFloatingWatermark="True"
-                             Grid.ColumnSpan="2"
-                             IsEnabled="{Binding Event.HasCrew}"/>
-
-
-                    <CheckBox IsChecked="{Binding Event.HasReward}"
-                              Margin="0 0 4 0">
-                        Reward
-                    </CheckBox>
-                    <TextBox Text="{Binding Event.RewardType}"
-                             Classes="Filled"
-                             Watermark="Type"
-                             IsEnabled="{Binding Event.HasReward}"/>
-                    <TextBox Text="{Binding Event.RewardLevel}"
-                             Classes="Filled"
-                             Watermark="Level"
-                             IsEnabled="{Binding Event.HasReward}"/>
-
-                    <TextBox Grid.ColumnSpan="3"
-                             Text="{Binding Event.WeaponReward}"
-                             Classes="Filled"
-                             wpf:TextFieldAssist.Label="Weapon"
-                             UseFloatingWatermark="True"/>
-                </c:AutoGrid>
-            </Expander>
-
-            <!-- Quest -->
-            <Expander Header="Quest"
-                      Margin="0 4"
-                      IsExpanded="{Binding HasQuest^, Mode=OneWay}">
-                <c:AutoGrid ColumnDefinitions="* *"
-                            RowCount="9"
-                            Margin="4 8 8 4">
-                    <c:AutoGrid.Styles>
-                        <Style Selector="CheckBox, TextBox">
-                            <Setter Property="IsVisible"
-                                    Value="{Binding HasQuestDefinition^}"/>
-                        </Style>
-                    </c:AutoGrid.Styles>
-                    <TextBlock>Mode</TextBlock>
-                    <ComboBox SelectedItem="{Binding QuestMode}"
-                              Items="{Binding QuestModes}"/>
-
-                    <TextBox Classes="Filled"
-                             wpf:TextFieldAssist.Label="Event Name"
-                             UseFloatingWatermark="True"
-                             Grid.ColumnSpan="2"
-                             IsVisible="{Binding HasQuestStart}"
-                             Text="{Binding Event.QuestEvent}"/>
-
-                    <CheckBox IsChecked="{Binding Event.QuestDefinition.NonNebulaBeacon}">
-                        Non Nebula Beacon
-                    </CheckBox>
-                    <CheckBox IsChecked="{Binding Event.QuestDefinition.NebulaBeacon}">
-                        Nebula Beacon
-                    </CheckBox>
-                    <CheckBox IsChecked="{Binding Event.QuestDefinition.CreateNebula}">
-                        Create Nebula
-                    </CheckBox>
-                    <CheckBox IsChecked="{Binding Event.QuestDefinition.CurrentSector}">
-                        Current Sector
-                    </CheckBox>
-                    <CheckBox IsChecked="{Binding Event.QuestDefinition.NextSector}">
-                        Next Sector
-                    </CheckBox>
-                    <CheckBox IsChecked="{Binding Event.QuestDefinition.SectorEight}">
-                        Sector Eight
-                    </CheckBox>
-                    <CheckBox IsChecked="{Binding Event.QuestDefinition.LastStand}">
-                        Last Stand
-                    </CheckBox>
-                    <TextBox Text="{Binding Event.QuestDefinition.Aggressive}"
-                             UseFloatingWatermark="True"
-                             wpf:TextFieldAssist.Label="Aggressive"
-                             wpf:TextFieldAssist.Hints="Number"/>
-                </c:AutoGrid>
-            </Expander>
-
-            <!-- Ship -->
-            <Expander Header="Ship"
-                      Margin="0 4"
-                      IsExpanded="{Binding HasShip, Mode=OneWay}">
-                <c:AutoGrid RowCount="2"
-                            ColumnDefinitions="* *"
-                            Margin="4 8 8 4">
-                    <CheckBox IsChecked="{Binding HasShip}">
-                        Has Ship
-                    </CheckBox>
-                    <CheckBox IsChecked="{Binding Event.ShipHostile}"
-                              IsVisible="{Binding HasShip}">
-                        Hostile
-                    </CheckBox>
-                    <TextBox Grid.ColumnSpan="2"
-                             Text="{Binding Event.ShipLoad}"
-                             wpf:TextFieldAssist.Label="Load Ship"
-                             UseFloatingWatermark="True"
-                             Classes="Filled"
-                             IsVisible="{Binding HasShip}"/>
-                </c:AutoGrid>
-            </Expander>
-
-            <!-- Boarders -->
-            <Expander Header="Boarders"
-                      Margin="0 4"
-                      IsExpanded="{Binding HasBoarders, Mode=OneWay}">
-                <c:AutoGrid RowCount="3"
-                            Margin="4 8 8 4"
-                            ColumnDefinitions="* *">
-                    <c:AutoGrid.Styles>
-                        <Style Selector="NumericUpDown /template/ TextBox#PART_TextBox">
-                            <Setter Property="UseFloatingWatermark"
-                                    Value="True"/>
-                        </Style>
-                    </c:AutoGrid.Styles>
-                    <TextBox Grid.ColumnSpan="2"
-                             Text="{Binding Event.BoarderClass}"
-                             wpf:TextFieldAssist.Label="Boarder Class"
-                             UseFloatingWatermark="True"
-                             Classes="Filled"/>
-                    <TextBlock>Min</TextBlock>
-                    <TextBlock>Max</TextBlock>
-                    <NumericUpDown Value="{Binding Event.BoarderMin}"
-                                   Margin="4"
-                                   ShowButtonSpinner="False"/>
-                    <NumericUpDown Value="{Binding Event.BoarderMax}"
-                                   Margin="4"
-                                   ShowButtonSpinner="False"/>
-                </c:AutoGrid>
-            </Expander>
-
-            <!-- Event Ref -->
-            <c:AutoGrid ColumnDefinitions="* Auto"
+            <c:AutoGrid RowCount="9"
                         RowHeight="Auto"
-                        RowCount="2"
-                        Margin="0 4"
-                        IsVisible="{Binding IsEventRef}">
-                <TextBox Text="{Binding EventRef.RefName}"
-                         wpf:TextFieldAssist.Label="Load Event"
+                        ChildMargin="5"
+                        Margin="4 0"
+                        ChildVerticalAlignment="Center"
+                        ColumnDefinitions="*">
+                <!-- ReSharper disable Xaml.MissingGridIndex -->
+
+                <TextBox Classes="Filled"
+                         wpf:TextFieldAssist.Label="Name"
                          UseFloatingWatermark="True"
-                         Classes="Filled"
-                         Margin="0 0 4 0"/>
-                <Button VerticalAlignment="Center"
-                        Command="{Binding EditEventRef}">
-                    Edit Event
-                </Button>
+                         Text="{Binding Name}"/>
+
+                <TextBox Classes="Filled"
+                         wpf:TextFieldAssist.Label="Text"
+                         UseFloatingWatermark="True"
+                         MaxHeight="100"
+                         Text="{Binding Text}"
+                         AcceptsReturn="True"
+                         TextWrapping="Wrap"/>
+
+                <!-- Rewards -->
+                <Expander Header="Rewards"
+                          Margin="0 4"
+                          IsExpanded="{Binding HasReward, Mode=OneWay}">
+                    <c:AutoGrid RowCount="5"
+                                ColumnDefinitions="Auto * *"
+                                Margin="4 8 8 0">
+                        <CheckBox IsChecked="{Binding Event.HasCrew}">
+                            Crew
+                        </CheckBox>
+                        <TextBox Text="{Binding Event.CrewClass}"
+                                 Classes="Filled"
+                                 Watermark="Class"
+                                 Grid.ColumnSpan="2"
+                                 IsEnabled="{Binding Event.HasCrew}"/>
+                        <NumericUpDown Value="{Binding Event.CrewAmount}"
+                                       IsEnabled="{Binding Event.HasCrew}"
+                                       VerticalAlignment="Center"
+                                       Margin="0 0 4 0"
+                                       ShowButtonSpinner="False"/>
+                        <TextBox Text="{Binding Event.CrewName}"
+                                 Classes="Filled"
+                                 wpf:TextFieldAssist.Label="Crew Name"
+                                 UseFloatingWatermark="True"
+                                 Grid.ColumnSpan="2"
+                                 IsEnabled="{Binding Event.HasCrew}"/>
+
+
+                        <CheckBox IsChecked="{Binding Event.HasReward}"
+                                  Margin="0 0 4 0">
+                            Reward
+                        </CheckBox>
+                        <TextBox Text="{Binding Event.RewardType}"
+                                 Classes="Filled"
+                                 Watermark="Type"
+                                 IsEnabled="{Binding Event.HasReward}"/>
+                        <TextBox Text="{Binding Event.RewardLevel}"
+                                 Classes="Filled"
+                                 Watermark="Level"
+                                 IsEnabled="{Binding Event.HasReward}"/>
+
+                        <TextBox Grid.ColumnSpan="3"
+                                 Text="{Binding Event.WeaponReward}"
+                                 Classes="Filled"
+                                 wpf:TextFieldAssist.Label="Weapon"
+                                 UseFloatingWatermark="True"/>
+                    </c:AutoGrid>
+                </Expander>
+
+                <!-- Quest -->
+                <Expander Header="Quest"
+                          Margin="0 4"
+                          IsExpanded="{Binding HasQuest^, Mode=OneWay}">
+                    <c:AutoGrid ColumnDefinitions="* *"
+                                RowCount="9"
+                                Margin="4 8 8 4">
+                        <c:AutoGrid.Styles>
+                            <Style Selector="CheckBox, TextBox">
+                                <Setter Property="IsVisible"
+                                        Value="{Binding HasQuestDefinition^}"/>
+                            </Style>
+                        </c:AutoGrid.Styles>
+                        <TextBlock>Mode</TextBlock>
+                        <ComboBox SelectedItem="{Binding QuestMode}"
+                                  Items="{Binding QuestModes}"/>
+
+                        <TextBox Classes="Filled"
+                                 wpf:TextFieldAssist.Label="Event Name"
+                                 UseFloatingWatermark="True"
+                                 Grid.ColumnSpan="2"
+                                 IsVisible="{Binding HasQuestStart}"
+                                 Text="{Binding Event.QuestEvent}"/>
+
+                        <CheckBox IsChecked="{Binding Event.QuestDefinition.NonNebulaBeacon}">
+                            Non Nebula Beacon
+                        </CheckBox>
+                        <CheckBox IsChecked="{Binding Event.QuestDefinition.NebulaBeacon}">
+                            Nebula Beacon
+                        </CheckBox>
+                        <CheckBox IsChecked="{Binding Event.QuestDefinition.CreateNebula}">
+                            Create Nebula
+                        </CheckBox>
+                        <CheckBox IsChecked="{Binding Event.QuestDefinition.CurrentSector}">
+                            Current Sector
+                        </CheckBox>
+                        <CheckBox IsChecked="{Binding Event.QuestDefinition.NextSector}">
+                            Next Sector
+                        </CheckBox>
+                        <CheckBox IsChecked="{Binding Event.QuestDefinition.SectorEight}">
+                            Sector Eight
+                        </CheckBox>
+                        <CheckBox IsChecked="{Binding Event.QuestDefinition.LastStand}">
+                            Last Stand
+                        </CheckBox>
+                        <TextBox Text="{Binding Event.QuestDefinition.Aggressive}"
+                                 UseFloatingWatermark="True"
+                                 wpf:TextFieldAssist.Label="Aggressive"
+                                 wpf:TextFieldAssist.Hints="Number"/>
+                    </c:AutoGrid>
+                </Expander>
+
+                <!-- Ship -->
+                <Expander Header="Ship"
+                          Margin="0 4"
+                          IsExpanded="{Binding HasShip, Mode=OneWay}">
+                    <c:AutoGrid RowCount="2"
+                                ColumnDefinitions="* *"
+                                Margin="4 8 8 4">
+                        <CheckBox IsChecked="{Binding HasShip}">
+                            Has Ship
+                        </CheckBox>
+                        <CheckBox IsChecked="{Binding Event.ShipHostile}"
+                                  IsVisible="{Binding HasShip}">
+                            Hostile
+                        </CheckBox>
+                        <TextBox Grid.ColumnSpan="2"
+                                 Text="{Binding Event.ShipLoad}"
+                                 wpf:TextFieldAssist.Label="Load Ship"
+                                 UseFloatingWatermark="True"
+                                 Classes="Filled"
+                                 IsVisible="{Binding HasShip}"/>
+                    </c:AutoGrid>
+                </Expander>
+
+                <!-- Boarders -->
+                <Expander Header="Boarders"
+                          Margin="0 4"
+                          IsExpanded="{Binding HasBoarders, Mode=OneWay}">
+                    <c:AutoGrid RowCount="3"
+                                Margin="4 8 8 4"
+                                ColumnDefinitions="* *">
+                        <c:AutoGrid.Styles>
+                            <Style Selector="NumericUpDown /template/ TextBox#PART_TextBox">
+                                <Setter Property="UseFloatingWatermark"
+                                        Value="True"/>
+                            </Style>
+                        </c:AutoGrid.Styles>
+                        <TextBox Grid.ColumnSpan="2"
+                                 Text="{Binding Event.BoarderClass}"
+                                 wpf:TextFieldAssist.Label="Boarder Class"
+                                 UseFloatingWatermark="True"
+                                 Classes="Filled"/>
+                        <TextBlock>Min</TextBlock>
+                        <TextBlock>Max</TextBlock>
+                        <NumericUpDown Value="{Binding Event.BoarderMin}"
+                                       Margin="4"
+                                       ShowButtonSpinner="False"/>
+                        <NumericUpDown Value="{Binding Event.BoarderMax}"
+                                       Margin="4"
+                                       ShowButtonSpinner="False"/>
+                    </c:AutoGrid>
+                </Expander>
+
+                <!-- Damages -->
+                <Expander Header="Damage"
+                          Margin="0 4"
+                          IsExpanded="{Binding HasDamages, Mode=OneWay}">
+                    <StackPanel>
+                        <Button Command="{Binding NewDamage}"
+                                HorizontalAlignment="Center">
+                            <StackPanel Orientation="Horizontal">
+                                <mat-icon:MaterialIcon Kind="Add"/>
+                                <TextBlock>New Damage</TextBlock>
+                            </StackPanel>
+                        </Button>
+                        <ItemsControl Items="{Binding Damages}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <c:AutoGrid RowCount="2"
+                                                ColumnDefinitions="Auto * * Auto">
+                                        <NumericUpDown ShowButtonSpinner="False"
+                                                       Value="{Binding Amount}"
+                                                       Margin="8 0 0 10"/>
+                                        <TextBox Text="{Binding System}"
+                                                 UseFloatingWatermark="True"
+                                                 Margin="8"
+                                                 wpf:TextFieldAssist.Label="System"/>
+                                        <TextBox Text="{Binding Effect}"
+                                                 UseFloatingWatermark="True"
+                                                 wpf:TextFieldAssist.Label="Effect"/>
+                                        <Button Click="RemoveDamage"
+                                                VerticalAlignment="Center">
+                                            <mat-icon:MaterialIcon Kind="Trash"/>
+                                        </Button>
+                                    </c:AutoGrid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Expander>
+
+                <!-- Event Ref -->
+                <c:AutoGrid ColumnDefinitions="* Auto"
+                            RowHeight="Auto"
+                            RowCount="2"
+                            Margin="0 4"
+                            IsVisible="{Binding IsEventRef}">
+                    <TextBox Text="{Binding EventRef.RefName}"
+                             wpf:TextFieldAssist.Label="Load Event"
+                             UseFloatingWatermark="True"
+                             Classes="Filled"
+                             Margin="0 0 4 0"/>
+                    <Button VerticalAlignment="Center"
+                            Command="{Binding EditEventRef}">
+                        Edit Event
+                    </Button>
+                </c:AutoGrid>
+                <!-- Xml -->
+                <Expander VerticalAlignment="Top"
+                          Margin="0 4"
+                          IsExpanded="{Binding RefreshRawTextHack, Mode=OneWayToSource}"
+                          Header="XML">
+                    <TextBox IsVisible="True"
+                             Height="200"
+                             Classes="Filled"
+                             AcceptsReturn="True"
+                             AcceptsTab="True"
+                             FontFamily="Consolas"
+                             TextWrapping="Wrap"
+                             Text="{Binding RawText^}"/>
+                </Expander>
+
+                <!-- ReSharper restore Xaml.MissingGridIndex -->
             </c:AutoGrid>
-
-            <!-- ReSharper restore Xaml.MissingGridIndex -->
-        </c:AutoGrid>
-
-        <!-- Xml -->
-        <Expander Grid.Row="2"
-                  Grid.Column="0"
-                  VerticalAlignment="Top"
-                  Margin="4"
-                  IsExpanded="{Binding RefreshRawTextHack, Mode=OneWayToSource}"
-                  Header="XML">
-            <TextBox IsVisible="True"
-                     Height="200"
-                     Classes="Filled"
-                     AcceptsReturn="True"
-                     AcceptsTab="True"
-                     FontFamily="Consolas"
-                     TextWrapping="Wrap"
-                     Text="{Binding RawText^}"/>
-        </Expander>
-
+        </ScrollViewer>
 
         <!-- Choices -->
         <Border Grid.Column="1"
                 Grid.Row="0"
-                Grid.RowSpan="3"
+                Grid.RowSpan="2"
                 Width="200"
                 IsVisible="{Binding HasChoices}"
                 BorderThickness="5">

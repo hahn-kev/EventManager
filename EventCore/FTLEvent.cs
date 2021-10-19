@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Xml.Linq;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
@@ -64,6 +65,8 @@ namespace EventCore
                 QuestDefinition = new FTLQuestDefinition(Element.Element("quest") ??
                                                          throw new NullReferenceException("quest tag not found"));
             }
+
+            Damages = Element.Children.Where(child => child.TagName == "damage").Select(child => new FTLDamage(child)).ToList();
         }
 
         public FTLEvent(IElement xElement, string? name, List<FTLChoice> choices, ModFile modFile) : this(xElement,
@@ -281,9 +284,27 @@ namespace EventCore
             return ftlChoice;
         }
 
+        public List<FTLDamage> Damages { get; }
+
+        public FTLDamage AddNewDamage()
+        {
+            var damageElement = Element.AppendNew("damage");
+            var ftlDamage = new FTLDamage(damageElement)
+            {
+                Amount = 0
+            };
+            return ftlDamage;
+        }
+
         public virtual bool IsUnknownRef => false;
 
         public virtual bool IsRef => false;
+
+        public void RemoveDamage(FTLDamage ftlDamage)
+        {
+            Element.RemoveChild(ftlDamage.Element);
+            Damages.Remove(ftlDamage);
+        }
     }
 
     public class FTLEventRef : FTLEvent
