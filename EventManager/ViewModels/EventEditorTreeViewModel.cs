@@ -32,7 +32,9 @@ namespace EventManager.ViewModels
                 case FTLEventList eventList:
                     var eventsListViewModel = new EventsListViewModel(eventList)
                     {
-                        ShowFilter = false
+                        ShowFilter = false,
+                        ShowIndex = true,
+                        Title = eventList.Name
                     };
                     eventsListViewModel.ObserveSelectedEvent.TakeUntil(shouldClose)
                         .Subscribe(newOpenedEvent => OpenEvent(newOpenedEvent, choiceDepth + 1));

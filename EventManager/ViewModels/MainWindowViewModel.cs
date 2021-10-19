@@ -43,7 +43,7 @@ namespace EventManager.ViewModels
 
             var ftlEvent = SelectedModFile.AddEvent();
             EventsList.Filter = "";
-            EventsList.SelectedEvent = ftlEvent;
+            EventsList.SetSelectedEvent(ftlEvent);
         }
 
         public async Task Load(Window window)

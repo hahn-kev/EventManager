@@ -120,8 +120,8 @@ namespace EventCore
                 : element.Children.Where(e => e.TagName == "choice").Select(ChoiceElementToModel)
                     .ToList();
             var ftlEvent = FTLEvent.NewEvent(element, ModFile, ftlChoices);
-
-            if (ftlEvent.Name is not null) Events[ftlEvent.Name] = ftlEvent;
+            var name = element.GetAttribute("name");
+            if (name is not null) Events[name] = ftlEvent;
             if (ftlEvent is FTLEventRef @ref) EventRefs.Add(@ref);
             else AllCanRefTexts.Add(ftlEvent);
             return ftlEvent;

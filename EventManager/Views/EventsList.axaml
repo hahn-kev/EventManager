@@ -18,15 +18,15 @@
                      Margin="8 8 8 0"
                      Text="{Binding Filter}"
                      IsVisible="{Binding ShowFilter}"/>
+            <TextBlock Text="{Binding Title}"
+                       DockPanel.Dock="Top"
+                       IsVisible="{Binding Title, Converter={x:Static ObjectConverters.IsNotNull}}"/>
 
             <ListBox Items="{Binding Events^}"
                      SelectedItem="{Binding SelectedEvent}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
-                            <!-- todo show something when there is no name -->
-                            <TextBlock Text="{Binding Name}"/>
-                        </StackPanel>
+                        <TextBlock Text="{Binding Title}"/>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>

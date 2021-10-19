@@ -326,8 +326,16 @@ namespace EventCore.FTL
         // public override List<FTLChoice> Choices => ActualEvent?.Choices ?? base.Choices;
         public override string? Name
         {
-            get => RefName;
-            set => RefName = value ?? "";
+            get => base.Name ?? RefName;
+            set
+            {
+                if (base.Name != null)
+                {
+                    base.Name = value;
+                    return;
+                }
+                RefName = value ?? "";
+            }
         }
 
         public string RefName

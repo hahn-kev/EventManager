@@ -13,7 +13,8 @@ namespace EventManager.ViewModels
 {
     public class EventsListViewModel : ViewModelBase
     {
-        public EventsListViewModel(FTLEventList eventList): this()
+        public string? Title { get; set; }
+        public EventsListViewModel(FTLEventList eventList) : this()
         {
             EventsLoaded(eventList.FtlEvents);
         }
@@ -21,15 +22,16 @@ namespace EventManager.ViewModels
         public EventsListViewModel()
         {
             ObserveSelectedEvent = this.WhenValueChanged(model => model.SelectedEvent)
-                .Where(@event => @event != null)!.OfType<FTLEvent>();
+                .Where(@event => @event != null).Select(model => model!.Event);
             var filterRx = this.WhenValueChanged(vm => vm.Filter);
             Events = _allEvents.CombineLatest(filterRx)
                 .Select(t =>
                 {
                     var (ftlEvents, filter) = t;
                     return ftlEvents.Where(e =>
-                        string.IsNullOrWhiteSpace(filter) ||
-                        (e.Name?.StartsWith(filter, true, null) ?? false));
+                            string.IsNullOrWhiteSpace(filter) ||
+                            (e.Name?.StartsWith(filter, true, null) ?? false))
+                        .Select((ftlEvent, index) => new EventItemViewModel(ftlEvent, index, this));
                 });
             //first returns false until an event get's selected
             HasSelectedEvent = Observable.Return(false)
@@ -50,12 +52,17 @@ namespace EventManager.ViewModels
             set => this.RaiseAndSetIfChanged(ref _filter, value);
         }
 
-        private FTLEvent? _selectedEvent;
+        private EventItemViewModel? _selectedEvent;
 
-        public FTLEvent? SelectedEvent
+        public EventItemViewModel? SelectedEvent
         {
             get => _selectedEvent;
             set => this.RaiseAndSetIfChanged(ref _selectedEvent, value);
+        }
+
+        public void SetSelectedEvent(FTLEvent ftlEvent)
+        {
+            SelectedEvent = new EventItemViewModel(ftlEvent, _allEvents.Value.Count, this);
         }
 
         private bool _showFilter = true;
@@ -67,6 +74,7 @@ namespace EventManager.ViewModels
         }
 
         private bool _showIndex = false;
+
         public bool ShowIndex
         {
             get => _showIndex;
@@ -76,6 +84,32 @@ namespace EventManager.ViewModels
         public IObservable<bool> HasSelectedEvent { get; }
         public IObservable<FTLEvent> ObserveSelectedEvent { get; }
 
-        public IObservable<IEnumerable<FTLEvent>> Events { get; }
+        public IObservable<IEnumerable<EventItemViewModel>> Events { get; }
+    }
+
+    public class EventItemViewModel : ViewModelBase
+    {
+        public FTLEvent Event { get; }
+        private readonly int _index;
+        private readonly EventsListViewModel _parent;
+
+        public EventItemViewModel(FTLEvent @event, int index, EventsListViewModel parent)
+        {
+            Event = @event;
+            _index = index;
+            _parent = parent;
+        }
+
+        public string? Title
+        {
+            get
+            {
+                if (!_parent.ShowIndex)
+                    return Event.Name;
+                if (Event.Name == null)
+                    return $"{_index + 1}";
+                return $"{_index + 1} {Event.Name}";
+            }
+        }
     }
 }
