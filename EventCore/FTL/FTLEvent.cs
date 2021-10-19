@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Xml.Linq;
 using AngleSharp.Dom;
-using AngleSharp.Html.Dom;
 
-namespace EventCore
+namespace EventCore.FTL
 {
     public class FTLEvent
     {

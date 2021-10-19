@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using AngleSharp.Dom;
 using AngleSharp.Xml.Parser;
 using EventCore;
+using EventCore.FTL;
 using JetBrains.dotMemoryUnit;
 using Shouldly;
 using Xunit;

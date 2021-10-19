@@ -12,6 +12,7 @@ using Avalonia.Metadata;
 using DynamicData;
 using DynamicData.Binding;
 using EventCore;
+using EventCore.FTL;
 using Material.Styles;
 using ReactiveUI;
 

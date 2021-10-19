@@ -6,6 +6,7 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using Avalonia.Layout;
 using EventCore;
+using EventCore.FTL;
 using ReactiveUI;
 
 namespace EventManager.ViewModels

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using EventCore;
+using EventCore.FTL;
 using ReactiveUI;
 
 namespace EventManager.ViewModels

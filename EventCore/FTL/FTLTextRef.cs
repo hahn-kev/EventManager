@@ -1,6 +1,6 @@
 ﻿using AngleSharp.Dom;
 
-namespace EventCore
+namespace EventCore.FTL
 {
     public class FTLTextRef
     {

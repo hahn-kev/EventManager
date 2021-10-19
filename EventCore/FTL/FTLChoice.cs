@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using AngleSharp.Dom;
 
-namespace EventCore
+namespace EventCore.FTL
 {
     public class FTLChoice
     {

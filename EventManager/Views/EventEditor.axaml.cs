@@ -5,6 +5,7 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using EventCore;
+using EventCore.FTL;
 using EventManager.ViewModels;
 
 namespace EventManager.Views
