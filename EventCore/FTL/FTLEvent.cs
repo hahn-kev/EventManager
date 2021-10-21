@@ -24,13 +24,21 @@ namespace EventCore.FTL
             "resetFtl", "win", "disableScrapScore", "unlockShip"
         };
 
-        public static FTLEvent NewEvent(IElement element, ModFile modFile, List<FTLChoice> choices)
+        public static FTLEvent ParseEvent(IElement element, ModFile modFile, List<FTLChoice> choices)
         {
             if (IsEventRef(element, out var name)) return new FTLEventRef(element, name, modFile);
             // if (element) return FTLEvent.Nothing;
 
             var xAttribute = element.GetAttribute("name");
             return new FTLEvent(element, xAttribute, choices, modFile);
+        }
+
+        public static FTLEvent NewEvent(IElement parentElement, ModFile modFile)
+        {
+            var newEventElement = parentElement.AppendNew("event");
+            var ftlEvent = new FTLEvent(newEventElement, "NEW_EVENT", new List<FTLChoice>(), modFile);
+            ftlEvent.Name = ftlEvent.Name;
+            return ftlEvent;
         }
 
 
@@ -280,7 +288,7 @@ namespace EventCore.FTL
             choiceElement.AppendNew("text", "placeholder");
             var choiceEventElement = choiceElement.AppendNew("event");
             var ftlChoice = new FTLChoice(Choices.Count,
-                NewEvent(choiceEventElement, ModFile, new List<FTLChoice>()),
+                ParseEvent(choiceEventElement, ModFile, new List<FTLChoice>()),
                 choiceElement,
                 ModFile);
             Choices.Add(ftlChoice);
@@ -379,6 +387,13 @@ namespace EventCore.FTL
             modFile)
         {
             FtlEvents = ftlEvents;
+        }
+
+        public FTLEvent AddNewEvent()
+        {
+            var newEvent = FTLEvent.NewEvent(Element, ModFile);
+            FtlEvents.Add(newEvent);
+            return newEvent;
         }
     }
 }

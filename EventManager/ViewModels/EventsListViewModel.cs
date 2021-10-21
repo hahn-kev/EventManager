@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using Avalonia.Layout;
@@ -14,6 +15,7 @@ namespace EventManager.ViewModels
     public class EventsListViewModel : ViewModelBase
     {
         public string? Title { get; set; }
+
         public EventsListViewModel(FTLEventList eventList) : this()
         {
             EventsLoaded(eventList.FtlEvents);
@@ -30,8 +32,7 @@ namespace EventManager.ViewModels
                     var (ftlEvents, filter) = t;
                     return ftlEvents.Where(e =>
                             string.IsNullOrWhiteSpace(filter) ||
-                            (e.Name?.StartsWith(filter, true, null) ?? false))
-                        .Select((ftlEvent, index) => new EventItemViewModel(ftlEvent, index, this));
+                            (e.Title?.StartsWith(filter, true, null) ?? false));
                 });
             //first returns false until an event get's selected
             HasSelectedEvent = Observable.Return(false)
@@ -40,10 +41,10 @@ namespace EventManager.ViewModels
 
         public void EventsLoaded(ICollection<FTLEvent> events)
         {
-            _allEvents.OnNext(events);
+            _allEvents.OnNext(events.Select((ftlEvent, index) => new EventItemViewModel(ftlEvent, index, this)).ToList());
         }
 
-        private readonly BehaviorSubject<ICollection<FTLEvent>> _allEvents = new(Array.Empty<FTLEvent>());
+        private readonly BehaviorSubject<ICollection<EventItemViewModel>> _allEvents = new(Array.Empty<EventItemViewModel>());
         private string? _filter;
 
         public string? Filter
@@ -81,6 +82,21 @@ namespace EventManager.ViewModels
             set => this.RaiseAndSetIfChanged(ref _showIndex, value);
         }
 
+        private bool _showAddButton;
+
+        public bool ShowAddButton
+        {
+            get => _showAddButton;
+            set => this.RaiseAndSetIfChanged(ref _showAddButton, value);
+        }
+
+        public void AddButtonClicked()
+        {
+            onAddEvent.OnNext(Unit.Default);
+        }
+
+        private Subject<Unit> onAddEvent = new Subject<Unit>();
+        public IObservable<Unit> AddEvent => onAddEvent.AsObservable();
         public IObservable<bool> HasSelectedEvent { get; }
         public IObservable<FTLEvent> ObserveSelectedEvent { get; }
 

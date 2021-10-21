@@ -119,7 +119,7 @@ namespace EventCore
                 ? new List<FTLChoice>()
                 : element.Children.Where(e => e.TagName == "choice").Select(ChoiceElementToModel)
                     .ToList();
-            var ftlEvent = FTLEvent.NewEvent(element, ModFile, ftlChoices);
+            var ftlEvent = FTLEvent.ParseEvent(element, ModFile, ftlChoices);
             var name = element.GetAttribute("name");
             if (name is not null) Events[name] = ftlEvent;
             if (ftlEvent is FTLEventRef @ref) EventRefs.Add(@ref);

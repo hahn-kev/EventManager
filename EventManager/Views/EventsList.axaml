@@ -4,25 +4,38 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:styles="clr-namespace:Material.Styles;assembly=Material.Styles"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              mc:Ignorable="d"
-             d:DesignWidth="800"
+             d:DesignWidth="400"
              d:DesignHeight="450"
              x:Class="EventManager.Views.EventsList">
     <Design.DataContext>
-        <vm:EventsListViewModel/>
+        <vm:EventsListViewModel Title="test"
+                                ShowFilter="False"
+                                ShowAddButton="True"/>
     </Design.DataContext>
     <styles:Card Padding="0">
-        <DockPanel>
-            <TextBox DockPanel.Dock="Top"
+        <Grid RowDefinitions="Auto, *">
+            <TextBox Grid.Row="0"
                      Watermark="Filter"
                      Margin="8 8 8 0"
                      Text="{Binding Filter}"
                      IsVisible="{Binding ShowFilter}"/>
-            <TextBlock Text="{Binding Title}"
-                       DockPanel.Dock="Top"
+            <TextBlock Grid.Row="0"
+                       Text="{Binding Title}"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Left"
                        IsVisible="{Binding Title, Converter={x:Static ObjectConverters.IsNotNull}}"/>
+            <Button Grid.Row="0"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Right"
+                    IsVisible="{Binding ShowAddButton}"
+                    Command="{Binding AddButtonClicked}">
+                <avalonia:MaterialIcon Kind="Add"/>
+            </Button>
 
-            <ListBox Items="{Binding Events^}"
+            <ListBox Grid.Row="1"
+                     Items="{Binding Events^}"
                      SelectedItem="{Binding SelectedEvent}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
@@ -30,7 +43,7 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-        </DockPanel>
+        </Grid>
     </styles:Card>
 
 </UserControl>

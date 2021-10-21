@@ -34,8 +34,16 @@ namespace EventManager.ViewModels
                     {
                         ShowFilter = false,
                         ShowIndex = true,
+                        ShowAddButton = true,
                         Title = eventList.Name
                     };
+                    eventsListViewModel.AddEvent.TakeUntil(shouldClose)
+                        .Subscribe(_ =>
+                        {
+                            eventList.AddNewEvent();
+                            eventsListViewModel.EventsLoaded(eventList.FtlEvents);
+                        });
+
                     eventsListViewModel.ObserveSelectedEvent.TakeUntil(shouldClose)
                         .Subscribe(newOpenedEvent => OpenEvent(newOpenedEvent, choiceDepth + 1));
                     viewModel = eventsListViewModel;

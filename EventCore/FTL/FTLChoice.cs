@@ -74,7 +74,7 @@ namespace EventCore.FTL
             var eventElement = Event.Element;
             eventElement.RemoveAttribute("load");
             eventElement.RemoveChildElement("loadEvent");
-            Event = FTLEvent.NewEvent(eventElement, ModFile, new List<FTLChoice>());
+            Event = FTLEvent.ParseEvent(eventElement, ModFile, new List<FTLChoice>());
         }
 
         public void ConvertToLoadEvent()
@@ -87,7 +87,7 @@ namespace EventCore.FTL
             var eventElement = Event.Element;
             eventElement.AppendNew("loadEvent");
 
-            Event = FTLEvent.NewEvent(eventElement, ModFile, new List<FTLChoice>());
+            Event = FTLEvent.ParseEvent(eventElement, ModFile, new List<FTLChoice>());
         }
     }
 }

@@ -56,12 +56,7 @@ namespace EventCore
             if (elementParentElement == null)
                 throw new NullReferenceException("unable to find parent element to add the new event element too");
 
-            var newEventElement = elementParentElement.AppendNew("event");
-            var ftlEvent = new FTLEvent(newEventElement, "NEW_EVENT", new List<FTLChoice>(), this);
-            ftlEvent.Name = ftlEvent.Name;
-            // Events[ftlEvent.Name!] = ftlEvent;
-            // if (ModRoot != null) ModRoot.EventsLookup[ftlEvent.Name!] = ftlEvent;
-            return ftlEvent;
+            return FTLEvent.NewEvent(elementParentElement, this);
         }
 
         public void EventNameUpdated(string? oldName, string? newName, FTLEvent ftlEvent)
