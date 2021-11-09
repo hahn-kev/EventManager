@@ -49,14 +49,16 @@ namespace EventCore
 
         public FTLEvent AddEvent()
         {
-            var firstEvent = Events.Values.FirstOrDefault();
-            if (firstEvent == null) throw new NullReferenceException("no event found in mod file " + FileName);
+            var parent = Events.Values.FirstOrDefault()?.Element.ParentElement;
+            if (parent == null)
+            {
+                parent = Document.QuerySelector("FTL");
+            }
 
-            var elementParentElement = firstEvent.Element.ParentElement;
-            if (elementParentElement == null)
+            if (parent == null)
                 throw new NullReferenceException("unable to find parent element to add the new event element too");
 
-            return FTLEvent.NewEvent(elementParentElement, this);
+            return FTLEvent.NewEvent(parent, this);
         }
 
         public void EventNameUpdated(string? oldName, string? newName, FTLEvent ftlEvent)
