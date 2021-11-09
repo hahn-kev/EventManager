@@ -39,6 +39,10 @@ namespace EventCore
 
         public ModLoader(string folderPath)
         {
+            if (Directory.Exists(Path.Combine(folderPath, "mod-appendix")))
+            {
+                folderPath = Path.Combine(folderPath, "data");
+            }
             _folderPath = folderPath;
         }
 
@@ -79,9 +83,9 @@ namespace EventCore
 
         private IEnumerable<string> ListEventFiles(out ModFileLoader? hyperspaceLoader)
         {
-            var hyperspacePath = Path.Combine(_folderPath, "hyperspace.xml");
             var allDefaultEventFiles = DefaultEventFiles.Concat(DefaultEventFiles.Select(fileName => fileName + ".append"));
-            if (!File.Exists(hyperspacePath))
+            var hyperspacePath = GetValidHyperspacePath();
+            if (hyperspacePath is null)
             {
                 hyperspaceLoader = null;
                 return allDefaultEventFiles;
@@ -92,6 +96,14 @@ namespace EventCore
             var hyperspaceDocument = hyperspaceLoader.ModFile.Document;
             var eventFiles = hyperspaceDocument.QuerySelectorAll("eventFile").ToArray();
             return eventFiles.Select(e => $"events_{e.TextContent}.xml").Concat(allDefaultEventFiles);
+        }
+
+        private string? GetValidHyperspacePath()
+        {
+            var hyperspacePath = Path.Combine(_folderPath, "hyperspace.xml");
+            if (File.Exists(hyperspacePath)) return hyperspacePath;
+            hyperspacePath = Path.ChangeExtension(hyperspacePath, ".xml.append");
+            return File.Exists(hyperspacePath) ? hyperspacePath : null;
         }
 
         private void LinkEventRefs(ModRoot modRoot)
