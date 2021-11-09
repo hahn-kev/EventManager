@@ -34,7 +34,7 @@ namespace EventManager
             {
                 Logger.Sink = new CustomLogSink(loggerFactory);
                 logger.LogInformation("application start");
-                BuildAvaloniaApp()
+                BuildAvaloniaApp(loggerFactory)
                     .StartWithClassicDesktopLifetime(args);
             }
             catch (Exception e)
@@ -45,8 +45,8 @@ namespace EventManager
         }
 
         // Avalonia configuration, don't remove; also used by visual designer.
-        public static AppBuilder BuildAvaloniaApp() =>
-            AppBuilder.Configure<App>()
+        public static AppBuilder BuildAvaloniaApp(ILoggerFactory loggerFactory) =>
+            AppBuilder.Configure(() => new App(loggerFactory))
                 .UsePlatformDetect()
                 .UseReactiveUI();
     }

@@ -8,16 +8,19 @@ using Avalonia.Controls;
 using Avalonia.Logging;
 using EventCore;
 using Material.Styles;
+using Microsoft.Extensions.Logging;
 using ReactiveUI;
 
 namespace EventManager.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {
+        private readonly ILogger _logger;
         private ModRoot? _modRoot;
 
-        public MainWindowViewModel()
+        public MainWindowViewModel(ILogger logger)
         {
+            _logger = logger;
             EventsList.ObserveSelectedEvent.Subscribe(ftlEvent => EditorTreeViewModel.SetTopLevelEvent(ftlEvent));
         }
 
@@ -52,11 +55,20 @@ namespace EventManager.ViewModels
 #if DEBUG
             // folderPath = @"D:\Games\FTL Stuff\EventManager\Tests\TestData\data";
 #endif
-            if (folderPath == null)
+            try
             {
-                var folderDialog = new OpenFolderDialog { Title = "Select the mod data folder" };
-                folderPath = await folderDialog.ShowAsync(window);
+                if (folderPath == null)
+                {
+                    var folderDialog = new OpenFolderDialog { Title = "Select the mod data folder" };
+                    folderPath = await folderDialog.ShowAsync(window);
+                }
             }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error opening folder dialog");
+                throw;
+            }
+
 
             if (string.IsNullOrEmpty(folderPath)) return;
             var modLoader = new ModLoader(folderPath);
@@ -67,6 +79,7 @@ namespace EventManager.ViewModels
             catch (Exception e)
             {
                 SnackbarHost.Post("Error: " + e.Message);
+                _logger.LogError(e, "Error loading mod: " + folderPath);
                 return;
             }
 
