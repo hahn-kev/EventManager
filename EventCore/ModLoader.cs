@@ -83,7 +83,7 @@ namespace EventCore
 
         private IEnumerable<string> ListEventFiles(out ModFileLoader? hyperspaceLoader)
         {
-            var allDefaultEventFiles = DefaultEventFiles.Concat(DefaultEventFiles.Select(fileName => fileName + ".append"));
+            var allDefaultEventFiles = IncludeAppendFiles(DefaultEventFiles);
             var hyperspacePath = GetValidHyperspacePath();
             if (hyperspacePath is null)
             {
@@ -94,8 +94,14 @@ namespace EventCore
             hyperspaceLoader = new ModFileLoader(hyperspacePath);
             hyperspaceLoader.Load();
             var hyperspaceDocument = hyperspaceLoader.ModFile.Document;
-            var eventFiles = hyperspaceDocument.QuerySelectorAll("eventFile").ToArray();
-            return eventFiles.Select(e => $"events_{e.TextContent}.xml").Concat(allDefaultEventFiles);
+            var eventFiles = hyperspaceDocument.QuerySelectorAll("eventFile");
+            return IncludeAppendFiles(eventFiles.Select(e => $"events_{e.TextContent}.xml").ToArray())
+                .Concat(allDefaultEventFiles);
+        }
+
+        private static IEnumerable<string> IncludeAppendFiles(string[] eventFiles)
+        {
+            return eventFiles.Concat(eventFiles.Select(fileName => fileName + ".append"));
         }
 
         private string? GetValidHyperspacePath()
