@@ -35,7 +35,13 @@ namespace EventManager.ViewModels
             set => this.RaiseAndSetIfChanged(ref _modRoot, value);
         }
 
-        public ModFile? SelectedModFile { get; set; }
+        private ModFile? _selectedModFile;
+
+        public ModFile? SelectedModFile
+        {
+            get => _selectedModFile;
+            set => this.RaiseAndSetIfChanged(ref _selectedModFile, value);
+        }
 
         public void AddEvent()
         {
@@ -75,6 +81,7 @@ namespace EventManager.ViewModels
             try
             {
                 ModRoot = modLoader.Load();
+                SelectedModFile = ModRoot.ModFiles.Values.FirstOrDefault();
             }
             catch (Exception e)
             {

@@ -62,7 +62,7 @@ namespace EventCore
             }
 
             // await Task.WhenAll(modFileLoaders.Select(mfl => mfl.Load()));
-            modFileLoaders = modFileLoaders.Where(file => file.Events.Count > 0 || file.TextRefs.Count > 0).ToArray();
+            modFileLoaders = modFileLoaders.ToArray();
 
             EventRefs.AddRange(modFileLoaders.SelectMany(loader => loader.EventRefs));
 
