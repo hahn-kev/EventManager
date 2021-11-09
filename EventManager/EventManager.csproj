@@ -4,7 +4,7 @@
         <TargetFramework>net6.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ApplicationIcon>Assets\avalonia-logo.ico</ApplicationIcon>
-        <AssemblyVersion>1.0.0.2</AssemblyVersion>
+        <AssemblyVersion>1.0.0.3</AssemblyVersion>
 
         <PublishSingleFile>true</PublishSingleFile>
         <SelfContained>true</SelfContained>
