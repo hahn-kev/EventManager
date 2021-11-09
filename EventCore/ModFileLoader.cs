@@ -133,7 +133,7 @@ namespace EventCore
 
             if (eventElement is null)
             {
-                throw new NotSupportedException("choice must have an event");
+                throw new NotSupportedException("choice must have an event " + element.OuterHtml);
             }
 
             var ftlEvent = EventElementToModel(eventElement);

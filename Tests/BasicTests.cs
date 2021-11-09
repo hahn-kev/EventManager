@@ -143,7 +143,7 @@ namespace Tests
             var ftlEvent = modFile.Events.Values.First();
             var text = ftlEvent.Text += "_test";
 
-            var textElements = ftlEvent.Element.QuerySelectorAll("text").ToArray();
+            var textElements = ftlEvent.Element.Children.Where(c => c.TagName == "text").ToArray();
             textElements.Length.ShouldBe(1);
             textElements.First().TextContent.ShouldBe(text);
         }

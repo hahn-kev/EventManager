@@ -25,7 +25,7 @@ namespace EventCore
 
         public override string Comment(IComment comment)
         {
-            return IndentBefore() + "<!--" + NormalizeLineEndings(comment.Data) + "-->";
+            return "<!--" + NormalizeLineEndings(comment.Data) + "-->";
         }
 
         private string NormalizeLineEndings(string s)

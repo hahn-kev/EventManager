@@ -1459,11 +1459,13 @@
 		<text>Just as they're finishing the salvage operation, your crew reports they're being attacked by what they claim to be the Ghosts of the previous crew. You're concerned at first until you return to a sensible place of mind and remind yourself real Ghosts don't exist. These must merely be the gaseous race nicknamed the Ghosts, known to inhabit wrecked vessels!</text>
 		<choice hidden="true">
 			<text>Order your crew to retreat with what they can and get back to the ship.</text>
-			<autoReward level="MED">scrap_only</autoReward>
-			<choice hidden="true">
-				<text>Continue...</text>
-				<event load="ABANDONED_GHOST_SPACE"/>
-			</choice>
+			<event>
+				<autoReward level="MED">scrap_only</autoReward>
+				<choice hidden="true">
+					<text>Continue...</text>
+					<event load="ABANDONED_GHOST_SPACE"/>
+				</choice>
+			</event>
 		</choice>
 		<choice hidden="true">
 			<text>Order them to stand their ground, they should be able to handle a few Ghosts.</text>
