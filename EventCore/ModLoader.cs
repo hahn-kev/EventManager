@@ -31,6 +31,8 @@ namespace EventCore
             "events_ships.xml",
             "events_slug.xml",
             "events_zoltan.xml",
+            "nameEvents.xml",
+            "newEvents.xml",
             "dlcEvents.xml",
             "dlcEventsOverwrite.xml",
             "dlcEvents_anaerobic.xml",
