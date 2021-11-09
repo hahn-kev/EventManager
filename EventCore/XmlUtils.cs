@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
 using AngleSharp;
@@ -64,29 +65,33 @@ namespace EventCore
                 element.RemoveChild(child);
         }
 
-        public static IElement AppendNew(this IElement element, string tagName, string? textContent = null)
+        public static IElement AppendNew(this IElement element, string tagName, string? textContent = null, bool? selfClosing = default)
         {
-            var childElement = NewElement(element, tagName, textContent);
+            var childElement = NewElement(element, tagName, textContent, selfClosing);
             element.AppendChild(childElement);
+            AfterAddNew(element);
             return childElement;
         }
 
-        private static IElement NewElement(IElement element, string tagName, string? textContent)
+        private static IElement NewElement(IElement element, string tagName, string? textContent, bool? selfClosing)
         {
             var document = element.Owner as Document;
             if (document == null)
                 throw new NullReferenceException("element owner is null");
             // var elementFactory = document.Context.GetFactory<IElementFactory<Document, HtmlElement>>();
-            var flags = textContent == null ? NodeFlags.SelfClosing : NodeFlags.None;
+            var flags = selfClosing.GetValueOrDefault(textContent == null) ? NodeFlags.SelfClosing : NodeFlags.None;
 
             var childElement = document.CreateElementFrom(tagName, null!, flags);
             if (textContent != null) childElement.TextContent = textContent;
             return childElement;
         }
 
-        public static IElement PrependNew(this IElement element, string tagName, string? textContent = null)
+        public static IElement PrependNew(this IElement element,
+            string tagName,
+            string? textContent = null,
+            bool? selfClosing = default)
         {
-            var childElement = NewElement(element, tagName, textContent);
+            var childElement = NewElement(element, tagName, textContent, selfClosing);
             if (element.FirstChild != null)
             {
                 element.FirstChild.InsertBefore(childElement);
@@ -95,8 +100,18 @@ namespace EventCore
             {
                 element.AppendChild(childElement);
             }
-
+            AfterAddNew(element);
             return childElement;
+        }
+
+        private static void AfterAddNew(IElement parent)
+        {
+            if (parent.HasChildNodes && !parent.Flags.HasFlag(NodeFlags.SelfClosing)) return;
+
+            //hack to change flags to not be self closing
+            var newFlagValue = parent.Flags & ~NodeFlags.SelfClosing;
+            var field = typeof(Node).GetField("_flags", BindingFlags.NonPublic | BindingFlags.Instance);
+            field?.SetValue(parent, newFlagValue);
         }
 
         public static void SetAttribute(this IElement element, string name, bool value)

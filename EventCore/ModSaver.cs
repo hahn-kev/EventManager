@@ -2,8 +2,6 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using AngleSharp;
-using AngleSharp.Xml;
 
 namespace EventCore
 {

@@ -35,7 +35,7 @@ namespace EventCore.FTL
 
         public static FTLEvent NewEvent(IElement parentElement, ModFile modFile)
         {
-            var newEventElement = parentElement.AppendNew("event");
+            var newEventElement = parentElement.AppendNew("event", selfClosing:false);
             var ftlEvent = new FTLEvent(newEventElement, "NEW_EVENT", new List<FTLChoice>(), modFile);
             ftlEvent.Name = ftlEvent.Name;
             return ftlEvent;
@@ -240,7 +240,7 @@ namespace EventCore.FTL
                     return;
                 }
 
-                var questElement = Element.Element("quest") ?? Element.AppendNew("quest");
+                var questElement = Element.Element("quest") ?? Element.AppendNew("quest", selfClosing: false);
                 if (value == QuestModeEnum.Start)
                 {
                     questElement.SetAttribute("event", "");
@@ -284,9 +284,9 @@ namespace EventCore.FTL
         public FTLChoice AddNewChoice()
         {
             //todo format output xml better
-            var choiceElement = Element.AppendNew("choice");
+            var choiceElement = Element.AppendNew("choice", selfClosing:false);
             choiceElement.AppendNew("text", "placeholder");
-            var choiceEventElement = choiceElement.AppendNew("event");
+            var choiceEventElement = choiceElement.AppendNew("event", selfClosing:false);
             var ftlChoice = new FTLChoice(Choices.Count,
                 ParseEvent(choiceEventElement, ModFile, new List<FTLChoice>()),
                 choiceElement,

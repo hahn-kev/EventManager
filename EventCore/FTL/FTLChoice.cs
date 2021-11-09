@@ -85,7 +85,7 @@ namespace EventCore.FTL
             }
 
             var eventElement = Event.Element;
-            eventElement.AppendNew("loadEvent");
+            eventElement.AppendNew("loadEvent", selfClosing:false);
 
             Event = FTLEvent.ParseEvent(eventElement, ModFile, new List<FTLChoice>());
         }
