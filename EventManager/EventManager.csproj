@@ -1,10 +1,19 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <TargetFramework>net5.0</TargetFramework>
+        <TargetFramework>net6.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ApplicationIcon>Assets\avalonia-logo.ico</ApplicationIcon>
-        <AssemblyVersion>1.0.0.1</AssemblyVersion>
+        <AssemblyVersion>1.0.0.2</AssemblyVersion>
+
+        <PublishSingleFile>true</PublishSingleFile>
+        <SelfContained>true</SelfContained>
+        <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+        <PublishReadyToRun>true</PublishReadyToRun>
+        <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+        <PublishTrimmed>true</PublishTrimmed>
+        <TrimMode>copyused</TrimMode>
+        <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
     </PropertyGroup>
     <ItemGroup>
         <Folder Include="Models\" />

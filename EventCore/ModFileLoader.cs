@@ -51,7 +51,7 @@ namespace EventCore
             var fileText = File.ReadAllText(filePath);
 
             var document = xmlParser.ParseDocument(fileText);
-            if (document.DocumentElement.TagName == "FTL") return document;
+            if (document.DocumentElement?.TagName == "FTL") return document;
             document = xmlParser.ParseDocument($"<FTL>\r\n{fileText}\r\n</FTL>");
             return document;
         }
